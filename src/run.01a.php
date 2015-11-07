@@ -69,12 +69,12 @@ echo "fn: $filename, uid: $userid, nn: $nickname";
 die();
 */ 
 if (isset($userid) && (trim($userid) !== ""))
-   $url = dirname(__FILE__) . DIRECTORY_SEPARATOR . "users" . DIRECTORY_SEPARATOR . $nickname . DIRECTORY_SEPARATOR;
+   $url = dirname(__FILE__) . "/users/$nickname";
 else
-   $url = dirname(__FILE__) . DIRECTORY_SEPARATOR . "samples" . DIRECTORY_SEPARATOR;
+   $url = dirname(__FILE__) . "/examples";
 
-$file = $url . $filename;
-$file = fopen($url . $filename, "r");
+$filepath = "$url/$filename";
+$file = fopen($filepath, "r");
 if ($file) {
    while (($line = fgets($file)) !== false)
       echo $line;

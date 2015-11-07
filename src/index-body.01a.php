@@ -23,8 +23,8 @@
       <script src="/oslib/js/unicorn-ui.com/js/buttons.js"></script>
 
       <?
-      $threescriptorJs = $threescriptorStableReleaseDir . "threescriptor.01a.js";
-      $threescriptorCss = $threescriptorStableReleaseDir . "threescriptor.01a.css";
+      $threescriptorJs = $threescriptEditorSrcDir . "/threescriptor.01a.js";
+      $threescriptorCss = $threescriptEditorSrcDir . "/threescriptor.01a.css";
       echo "<script src='$threescriptorJs'></script>";
       echo "<link href='$threescriptorCss' rel='stylesheet'>";
       ?>
@@ -68,17 +68,22 @@
             <?php
             if (isset($userid)) {
                echo ($firstname);
-            } else {
-               echo "<form id='form-login' action='login.01b.php' method='post'>";
+               echo "<form id='form-signout' action='$threescriptEditorSrcDir/login.01b.php' method='post'>";
                echo "<input id='operation' type='hidden' name='operation'></input>";
-               echo "<div class='top-div-item'>nickname or email</div>";
+               echo "<div class='top-div-item button button-primary button-tiny'>
+                  <a id='signout' href='#'>Sign Out</a></div>";
+               echo "</form>";
+            } else {
+               echo "<form id='form-signin' action='$threescriptEditorSrcDir/login.01b.php' method='post'>";
+               echo "<input id='operation' type='hidden' name='operation'></input>";
+               echo "<div class='top-div-item'>Nickname or e-mail</div>";
                echo "<div class='top-div-item'><input type='text' name='nickname_or_email'></input></div>";
-               echo "<div class='top-div-item'>password</div>";
+               echo "<div class='top-div-item'>Password</div>";
                echo "<div class='top-div-item'><input type='password' name='password'></input></div>";
                echo "<div class='top-div-item button button-primary button-tiny'>
-                  <a id='login' href='#'>log</a></div>";
+                  <a id='signin' href='#'>Sign In</a></div>";
                echo "<div class='top-div-item button button-primary button-tiny'>
-                  <a id='register' href='#'>register</a></div>";
+                  <a id='register' href='#'>Register</a></div>";
                echo "</form>";
             }
             ?>

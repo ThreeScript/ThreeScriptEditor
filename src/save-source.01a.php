@@ -5,7 +5,7 @@ require("session.01a.php");
 $fileid = $_REQUEST["fileid"];
 $text = $_REQUEST["txt"];
 
-$myfile = fopen($url . $fileid, "w");
+$myfile = fopen("$url/$fileid", "w");
 
 if ($myfile) {
    fwrite($myfile, $text);

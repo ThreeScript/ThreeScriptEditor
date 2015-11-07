@@ -6,8 +6,6 @@ if (!userid)
    die('');
 
 $folder = $_REQUEST['folder'];
-if (isset($folder))
-   $folder .= DIRECTORY_SEPARATOR;
 
 $file = $_FILES['userfile'];
 
@@ -15,7 +13,7 @@ $filename = $file['name'];
 
 $tempfilename = $file['tmp_name'];
 
-$filenamepath = $url . $folder . $filename;
+$filenamepath = "$url/$folder/$filename";
 
 $data = "{
       \"folder\":\"$folder\",

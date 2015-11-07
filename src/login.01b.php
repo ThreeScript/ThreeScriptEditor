@@ -2,7 +2,7 @@
 session_start();
 
 if ($_SESSION["ID"]) {
-   header("Location: http://www.studddio.com/ts");
+   header("Location: http://www.threescript.com");
 }
 
 $operation = $_REQUEST["operation"];
@@ -28,6 +28,9 @@ $provider_user_id = null;
 
 switch ($operation) {
    case "signin":
+      $_SESSION["ID"] = null;
+      header("Location: http://www.threescript.com");
+   case "signin":
       // echo "SIGNIN: $operation <br/>";
       if (isset($nickname_or_email) && isset($password)) {
          $link = linkDatabase() or die("Connection error!");
@@ -41,7 +44,7 @@ switch ($operation) {
             $_SESSION["FIRSTNAME"] = $user["firstname"];
             $_SESSION["LASTNAME"] = $user["lastname"];
             $_SESSION["EMAIL"] = $user["email"];
-            header("Location: http://www.studddio.com/ts");
+            header("Location: http://www.threescript.com");
          } else {
             $error_msg = "Wrong nickname, email or password.";
             $form_login = formLogin();
@@ -72,7 +75,7 @@ switch ($operation) {
                $_SESSION["ID"] = $user["id"];
                $_SESSION["NICKNAME"] = $user["nickname"];
                $_SESSION["FIRSTNAME"] = $user["firstname"];
-               header("Location: http://www.studddio.com/ts");
+               header("Location: http://www.threescript.com");
             } else {
                $firstname = $user_profile->firstName;
                $lastname = $user_profile->lastName;
@@ -94,7 +97,7 @@ switch ($operation) {
       if (!$ok) {
          $form_register = formRegister($provider, $nickname, $firstname, $lastname, $email, $provider_user_id);
       } else {
-         header("Location: http://www.studddio.com/ts");
+         header("Location: http://www.threescript.com");
       }
       break;
    default:

@@ -8,14 +8,16 @@ $firstname = null;
 $lastname = null;
 $readonly = false;
 
+$docroot = $_SERVER["DOCUMENT_ROOT"];
+
 if ($_SESSION["ID"]) {
    $userid = $_SESSION["ID"];
    $nickname = $_SESSION["NICKNAME"];
    $firstname = $_SESSION["FIRSTNAME"];
    $lastname = $_SESSION["LASTNAME"];
-   $url = $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . 'users' . DIRECTORY_SEPARATOR . $nickname . DIRECTORY_SEPARATOR;
+   $url = "$docroot/users/$nickname";
 } else {
-   $url = $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "$environment/examples" . DIRECTORY_SEPARATOR;
+   $url = "$docroot/examples";
    $readonly = true;
 }
 ?>

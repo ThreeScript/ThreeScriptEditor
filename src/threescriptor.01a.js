@@ -208,8 +208,15 @@ $(function() {
       form.submit();
    });
 
-   $("#login").click(function(e) {
-      var form = $("#form-login");
+   $("#signin").click(function(e) {
+      var form = $("#form-signout");
+      var input = $("#operation");
+      input.val("signout");
+      form.submit();
+   });
+
+   $("#signout").click(function(e) {
+      var form = $("#form-signout");
       var input = $("#operation");
       input.val("signin");
       form.submit();
