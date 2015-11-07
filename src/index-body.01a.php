@@ -112,7 +112,7 @@
                   </div>
                </div>
                <div id="data-bottom-div">
-                  <form id="form-run" action="run.01a.php" method="post" target="_blank">
+                  <form id="form-run" action="run.php" method="post" target="_blank">
                      <input id="userid" name="userid" type="hidden" value=""/>
                      <input id="nickname" name="nickname" type="hidden" value=""/>
                      <input id="filename" name="filename" type="hidden" value=""/>
