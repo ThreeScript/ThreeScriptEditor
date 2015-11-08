@@ -154,6 +154,9 @@ function prepareTree() {
                      }).attr('src', d.content);
                      $('#data .image').show();
                      break;
+                  case 'htm':
+                     $('#data .default').html(d.content).show();
+                     break;
                   default:
                      $('#data .default').html(d.content).show();
                      break;
@@ -184,7 +187,7 @@ $(function() {
 
    $("#save").click(function(e) {
       $.ajax({
-         url: "save-source.01a.php",
+         url: "save.php",
          method: "POST",
          dataType: "json",
          data: {
@@ -209,21 +212,21 @@ $(function() {
    });
 
    $("#signin").click(function(e) {
-      var form = $("#form-signout");
+      var form = $("#form-signin");
       var input = $("#operation");
-      input.val("signout");
+      input.val("signin");
       form.submit();
    });
 
    $("#signout").click(function(e) {
       var form = $("#form-signout");
       var input = $("#operation");
-      input.val("signin");
+      input.val("signout");
       form.submit();
    });
 
    $("#register").click(function(e) {
-      var form = $("#form-login");
+      var form = $("#form-signin");
       var input = $("#operation");
       input.val("register");
       form.submit();
@@ -232,29 +235,15 @@ $(function() {
    var form;
 
    $('#file-upload').change(function(event) {
-      // $("#form-upload").submit();
       form = new FormData();
       if (selectedData)
          form.append('folder', selectedData.node.id);
       form.append('userfile', event.target.files[0]); // para apenas 1 arquivo
       upload(form);
-      //var name = event.target.files[0].content.name; // para capturar o nome do arquivo com sua extenção
    });
 
    $('#send-upload').click(function() {
       upload(form);
-      /*
-       $.ajax({
-       url: 'upload-file.01a.php', // Url do lado server que vai receber o arquivo
-       data: form,
-       processData: false,
-       contentType: false,
-       type: 'POST',
-       success: function(data) {
-       // utilizar o retorno
-       }
-       });
-       */
    });
 
    $("#upload").click(function(e) {

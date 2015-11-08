@@ -67,7 +67,7 @@ $nickname = $_REQUEST["nickname"];
 /*
 echo "fn: $filename, uid: $userid, nn: $nickname";
 die();
-*/ 
+*/
 if (isset($userid) && (trim($userid) !== ""))
    $url = dirname(__FILE__) . "/users/$nickname";
 else

@@ -1,7 +1,5 @@
 <?php
 
-require("session.01a.php");
-
 $fileid = $_REQUEST["fileid"];
 $text = $_REQUEST["txt"];
 

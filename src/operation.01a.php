@@ -6,16 +6,15 @@ $text = $_GET['text'];
 $parent = $_GET['parent'];
 $type = $_GET['type'];
 
-// $url = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'samples' . DIRECTORY_SEPARATOR . 'samples-01' . DIRECTORY_SEPARATOR;
-
 function getIdNode($id) {
-   return (isset($id) && ($id !== '#')) ? $id : '/';
+   return isset($id) && ($id !== '#') ? $id : '/';
+}
+
+function getParent($parent) {
+   return isset($parent) && $parent !== '#' ? $parent : '/';
 }
 
 if (isset($operation)) {
-   // $fs = new fs('/bang/src/threescript/users/samples/samples-01');
-   // $fs = new fs(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'root' . DIRECTORY_SEPARATOR);
-   
    $fs = new fs($url);
    try {
       $rslt = null;
@@ -37,11 +36,11 @@ if (isset($operation)) {
             $rslt = $fs->remove($node);
             break;
          case 'move_node':
-            $parn = isset($parent) && $parent !== '#' ? $parent : '/';
+            $parn = getParent($parent);
             $rslt = $fs->move($node, $parn);
             break;
          case 'copy_node':
-            $parn = isset($parent) && $parent !== '#' ? $parent : '/';
+            $parn = getParent($parent);
             $rslt = $fs->copy($node, $parn);
             break;
          default:

@@ -6,9 +6,6 @@
       <title>Threescriptor</title>
       <meta name="viewport" content="width=device-width" />
 
-      <!--script src="http://studddio.com/oslib/js/neil.fraser.name/js-interpreter/0.4.1/acorn.js"></script>
-      <script src="http://studddio.com/oslib/js/neil.fraser.name/js-interpreter/0.4.1/interpreter.js"></script-->
-
       <script src="/oslib/js/jquery/jquery-1.11.3.js"></script>
 
       <script src="/oslib/js/ace.c9.com/ace-builds.2.2.0/src-noconflict/ace.js" charset="utf-8"></script>
@@ -18,7 +15,6 @@
 
       <link rel="stylesheet" href="/oslib/js/unicorn-ui.com/css/font-awesome.min.css" />
       <link rel="stylesheet" href="/oslib/js/unicorn-ui.com/css/buttons.css" />
-
 
       <script src="/oslib/js/unicorn-ui.com/js/buttons.js"></script>
 
@@ -30,7 +26,7 @@
       ?>
    </head>
    <body>
-      <script>
+      <!-- reincorporate -- script>
          window.fbAsyncInit = function() {
             FB.init({
                appId: '909924852377111',
@@ -49,7 +45,7 @@
             js.src = "//connect.facebook.net/en_US/sdk.js";
             fjs.parentNode.insertBefore(js, fjs);
          }(document, 'script', 'facebook-jssdk'));
-      </script>
+      </script-->
       <script>
          var session_userid = "<?= $userid ?>";
          var session_nickname = "<?= $nickname ?>";
