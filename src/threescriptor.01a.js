@@ -35,6 +35,9 @@ function prepareTree() {
       },
       'contextmenu': {
          'items': function(node) {
+            if (node.id === "users" || node.id === "examples" || node.id === 'help') {
+               return;
+            }
             var tmp = $.jstree.defaults.contextmenu.items();
             delete tmp.create.action;
             tmp.create.label = "New";
@@ -99,6 +102,12 @@ function prepareTree() {
          data.instance.refresh();
       });
    }).on('rename_node.jstree', function(e, data) {
+      if (data.old === 'help')
+         data.text = 'help';
+      if (data.old === 'examples')
+         data.text = 'examples';
+      if (data.old === 'users')
+         data.text = 'users';
       $.get('?operation=rename_node', {'id': data.node.id, 'text': data.text}).done(function(d) {
          data.instance.set_id(data.node, d.id);
          selectedData = data;

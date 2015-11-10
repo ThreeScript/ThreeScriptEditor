@@ -4,6 +4,13 @@ class fs {
 
    protected $base = null;
 
+   public function __construct($base) {
+      $this->base = $this->real($base);
+      if (!$this->base) {
+         throw new Exception('Base directory does not exist');
+      }
+   }
+
    protected function real($path) {
       $temp = realpath($path);
       if (!$temp) {
@@ -32,13 +39,6 @@ class fs {
       return strlen($path) ? $path : '/';
    }
 
-   public function __construct($base) {
-      $this->base = $this->real($base);
-      if (!$this->base) {
-         throw new Exception('Base directory does not exist');
-      }
-   }
-
    public function lst($id, $with_root = false) {
       $dir = $this->path($id);
       $lst = @scandir($dir);
@@ -46,6 +46,7 @@ class fs {
          throw new Exception('Could not list path: ' . $dir);
       }
       $res = array();
+      // echo "id: '$id'<br>";
       foreach ($lst as $item) {
          if ($item == '.' || $item == '..' || $item === null) {
             continue;
@@ -54,14 +55,36 @@ class fs {
          if ($tmp === false || $tmp === 1) {
             continue;
          }
+         if ($id === "/" && (($item !== 'examples') && ($item !== 'help') && ($item !== 'users'))) {
+            continue;
+         }
+         if (($id === "users") && (!$_SESSION["ID"])) {
+             continue;
+         }
          if (is_dir($dir . DIRECTORY_SEPARATOR . $item)) {
-            $res[] = array('text' => $item, 'children' => true, 'id' => $this->id($dir . DIRECTORY_SEPARATOR . $item), 'icon' => 'folder');
+            $res[] = array(
+                'text' => $item,
+                'children' => true,
+                'id' => $this->id($dir . DIRECTORY_SEPARATOR . $item),
+                'icon' => 'folder');
          } else {
-            $res[] = array('text' => $item, 'children' => false, 'id' => $this->id($dir . DIRECTORY_SEPARATOR . $item), 'type' => 'file', 'icon' => 'file file-' . substr($item, strrpos($item, '.') + 1));
+            $res[] = array(
+                'text' => $item,
+                'children' => false,
+                'id' => $this->id($dir . DIRECTORY_SEPARATOR . $item),
+                'type' => 'file', 'icon' =>
+                'file file-' . substr($item, strrpos($item, '.') + 1));
          }
       }
       if ($with_root && $this->id($dir) === '/') {
-         $res = array(array('text' => basename($this->base), 'children' => $res, 'id' => '/', 'icon' => 'folder', 'state' => array('opened' => true, 'disabled' => true)));
+         $res = array(
+             array(
+                 'text' => basename($this->base),
+                 'children' => $res, 'id' => '/',
+                 'icon' => 'folder',
+                 'state' => array(
+                     'opened' => true,
+                     'disabled' => true)));
       }
       return $res;
    }
@@ -69,15 +92,23 @@ class fs {
    public function data($id) {
       if (strpos($id, ":")) {
          $id = array_map(array($this, 'id'), explode(':', $id));
-         return array('type' => 'multiple', 'content' => 'Multiple selected: ' . implode(' ', $id));
+         return array(
+             'type' => 'multiple',
+             'content' => 'Multiple selected: ' . implode(' ', $id));
       }
       $dir = $this->path($id);
       if (is_dir($dir)) {
-         return array('type' => 'folder', 'content' => $id);
+         return array(
+             'type' => 'folder',
+             'content' => $id);
       }
       if (is_file($dir)) {
          $ext = strpos($dir, '.') !== FALSE ? substr($dir, strrpos($dir, '.') + 1) : '';
-         $dat = array('type' => $ext, 'fn' => $dir, 'fd' => $ext, 'content' => '');
+         $dat = array(
+             'type' => $ext,
+             'fn' => $dir,
+             'fd' => $ext,
+             'content' => '');
          switch ($ext) {
             case 'txt':
             case 'text':

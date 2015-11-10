@@ -8,7 +8,7 @@
 
       <script src="/oslib/js/jquery/jquery-1.11.3.js"></script>
 
-      <script src="/oslib/js/threejs/r71/build/three.min.js"></script>
+      <script src="/oslib/js/threejs/r72/build/three.min.js"></script>
       <script src="/oslib/js/threejs/r72/examples/js/utils/GeometryUtils.js"></script>
 
       <script src="/oslib/js/threejs/r72/examples/js/shaders/ConvolutionShader.js"></script>
@@ -44,36 +44,37 @@
       <link href="/oslib/js/unicorn-ui.com/css/buttons.css" rel="stylesheet" />
       <script src="/oslib/js/unicorn-ui.com/js/buttons.js"></script>
 
-      <script src="/src/threescript/r72/core/core.js"></script>
-      <script src="/src/threescript/r72/scenes/scenes.js"></script>
-      <script src="/src/threescript/r72/cameras/cameras.js"></script>
-      <script src="/src/threescript/r72/renderers/renderers.js"></script>
-      <script src="/src/threescript/r72/container/container.js"></script>
-      <script src="/src/threescript/r72/objects/objects.js"></script>
-      <script src="/src/threescript/r72/math/math.js"></script>
-      <script src="/src/threescript/r72/materials/materials.js"></script>
-      <script src="/src/threescript/r72/lights/lights.js"></script>
-      <script src="/src/threescript/r72/extras/extras.js"></script>
-      <script src="/src/threescript/r72/extras/geometries/geometries.js"></script>
-      <script src="/src/threescript/r72/examples/js/effects.js"></script>
- 
+      <?echo "<script src='$threescriptSrcDir/cameras/cameras.js'></script>\n";?>
+      <?echo "<script src='$threescriptSrcDir/container/container.js'></script>\n";?>
+      <?echo "<script src='$threescriptSrcDir/core/core.js'></script>\n";?>
+      <?echo "<script src='$threescriptSrcDir/examples/js/effects.js'></script>\n";?>
+      <?echo "<script src='$threescriptSrcDir/extras/extras.js'></script>\n";?>
+      <?echo "<script src='$threescriptSrcDir/extras/geometries/geometries.js'></script>\n";?>
+      <?echo "<script src='$threescriptSrcDir/lights/lights.js'></script>\n";?>
+      <?echo "<script src='$threescriptSrcDir/loaders/loaders.js'></script>\n";?>
+      <?echo "<script src='$threescriptSrcDir/materials/materials.js'></script>\n";?>
+      <?echo "<script src='$threescriptSrcDir/math/math.js'></script>\n";?>
+      <?echo "<script src='$threescriptSrcDir/meshes/meshes.js'></script>\n";?>
+      <?echo "<script src='$threescriptSrcDir/objects/objects.js'></script>\n";?>
+      <?echo "<script src='$threescriptSrcDir/renderers/renderers.js'></script>\n";?>
+      <?echo "<script src='$threescriptSrcDir/scenes/scenes.js'></script>\n";?>
+      <?echo "<script src='$threescriptSrcDir/textures/textures.js'></script>\n";?>
+
       <script>
          function init_ts() {
             try {
 <?php
+
 $filename = $_REQUEST["filename"];
+
 $userid = $_REQUEST["userid"];
+
 $nickname = $_REQUEST["nickname"];
-/*
-echo "fn: $filename, uid: $userid, nn: $nickname";
-die();
-*/
-if (isset($userid) && (trim($userid) !== ""))
-   $url = dirname(__FILE__) . "/users/$nickname";
-else
-   $url = dirname(__FILE__) . "/examples";
+
+$url = dirname(__DOCUMENT_ROOT__) . "/";
 
 $filepath = "$url/$filename";
+
 $file = fopen($filepath, "r");
 if ($file) {
    while (($line = fgets($file)) !== false)
