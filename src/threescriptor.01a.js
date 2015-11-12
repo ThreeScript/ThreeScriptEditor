@@ -133,9 +133,9 @@ function prepareTree() {
    }).on('changed.jstree', function(e, data) {
       disableButtons();
       /*
-      $("#btn-save").css("display", "none");
-      $("#btn-run").css("display", "none");
-      */
+       $("#btn-save").css("display", "none");
+       $("#btn-run").css("display", "none");
+       */
       if (data && data.selected && data.selected.length) {
          selectedData = data;
          // selectedDataNodeId = data.node.id;
@@ -156,10 +156,10 @@ function prepareTree() {
                   case 'css':
                   case 'html':
                      /*
-                     if (!d.data.readonly)
-                        $("#btn-save").css("display", "block");
-                     $("#btn-run").css("display", "block");
-                     */
+                      if (!d.data.readonly)
+                      $("#btn-save").css("display", "block");
+                      $("#btn-run").css("display", "block");
+                      */
                      $('#data .code').show();
                      editor.setValue(d.content);
                      editor.gotoLine(1);
@@ -229,12 +229,12 @@ $(function() {
    }).resize();
 
    prepareTree();
-   
+
    disableButtons();
-/*
-   $("#btn-save").css("display", "none");
-   $("#btn-run").css("display", "none");
-*/
+   /*
+    $("#btn-save").css("display", "none");
+    $("#btn-run").css("display", "none");
+    */
    editor = ace.edit("editor");
    editor.setTheme("ace/theme/twilight");
    editor_session = editor.getSession();
@@ -253,10 +253,16 @@ $(function() {
             num++;
          }
       }
-      var print = num;
-      if (num)
-         print += ": " + lines;
-      $("#errors").val(num + lines);
+      if (num) {
+         $("#data-status-1").html("errors");
+         $("#data-status-2").html(num);
+         $("#data-status-3").html(lines);
+      }
+      else {
+         $("#data-status-1").html("ok");
+         $("#data-status-2").html("");
+         $("#data-status-3").html("");
+      }
    });
 
    $("#btn-run").click(function(e) {

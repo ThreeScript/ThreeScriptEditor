@@ -1,3 +1,15 @@
+<?
+
+$threejs_version = "r72";
+$threescript_version = "r72.1";
+
+$threejs_filepaths = array(
+    
+);
+
+function addScriptList() {
+}
+?>
 <!DOCTYPE html>
 <html>
    <head>
@@ -97,16 +109,16 @@
          fclose($file);
       }
       echo "
-      }
-      catch (err) {
-         alert('error: ' + err.message);
-         alert('stack: ' + err.stack);
-         alert('line: ' + err.line);
-      }
-   }
-</script>";
-      ?>
+            }
+            catch (err) {
+               alert('error: ' + err.message);
+               alert('stack: ' + err.stack);
+               alert('line: ' + err.line);
+            }
+         }
+      </script>
    </head>
-   <body onload="init_ts();" class="ts">
+   <body onload='init_ts();' class='ts'>
    </body>
-</html>
+</html>";
+      ?>

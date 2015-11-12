@@ -86,7 +86,10 @@
       <div id="panel-container" role="main">
          <div id="panel-container-tree">
             <div id="tree"></div>
-            <div id="tree-status"></div>
+            <div id="tree-status">
+               <div id="tree-status-1" class="bgs abs0000">
+               </div>
+            </div>
          </div>
          <div id="panel-container-data">
             <div id="data">
@@ -106,7 +109,14 @@
                   Select a file from the tree.
                </div>
             </div>
-            <div id="data-status"></div>
+            <div id="data-status">
+               <div id="data-status-1" class="bgs fl ml5 abs0000" style="right: 40px; ">
+               </div>
+               <div id="data-status-2" class="bgs fl ml5 abs0000" style="left: 45px; right: 90px;">
+               </div>
+               <div id="data-status-3" class="bgs fl ml5 abs0000" style="left: 95px;">
+               </div>
+            </div>
          </div>
       </div>
       <div id="panel-bottom">
@@ -126,12 +136,6 @@
          <a id="btn-delete" href="#" class="fl ml5 button button-primary button-small">Delete</a>
          <a id="btn-rename" href="#" class="fl ml5 button button-primary button-small">Rename</a>
          <a id="btn-upload" href="#" class="fl ml5 button button-primary button-small">Upload</a>
-         <div class="fl">
-            <div class="fl">errors:</div>
-            <div class="fl">
-               <input id="errors" type="text" value=""/>
-            </div>
-         </div>
       </div>
    </body>
 </html>

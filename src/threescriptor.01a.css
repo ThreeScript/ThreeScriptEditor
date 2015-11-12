@@ -32,6 +32,12 @@ html, body {
    margin: 0px;
 }
 
+.bgs {
+   background: #ffffff;
+   border: 1px solid #000000;
+    padding: 2px;
+}
+
 #panel-top {
    position: absolute;
    top: 0px;
@@ -74,7 +80,7 @@ html, body {
 #tree, #data { 
    position: absolute;
    top: 0px;
-   bottom: 40px;
+   bottom: 21px;
    left: 0px;
    right: 0px;
    overflow: auto; 
@@ -90,9 +96,9 @@ html, body {
    left: 0px;
    right: 0px;
    bottom: 0px;
-   height: 40px;
+   height: 19px;
    border: 1px solid #aaaaaa;
-   padding: 5px;
+   padding: 0px;
    background: #cccccc;
 }
 
