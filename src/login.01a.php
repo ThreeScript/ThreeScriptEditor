@@ -80,8 +80,9 @@ switch ($operation) {
       break;
 }
 
-function linkDatabase() {
-   $link = mysql_connect("localhost", "rptcombr_admin_1", "?Rpt64629402", "rptcombr_s3d-01");
+function linkDatabase_() {
+   $link = mysql_connect("localhost", "user_name", "user_password");
+   mysql_select_db('db_name', $link);
    return $link;
 }
 

@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 if ($_SESSION["ID"]) {
    header("Location: http://www.threescript.com");
@@ -27,9 +26,10 @@ $form_login = null;
 $provider_user_id = null;
 
 switch ($operation) {
-   case "signin":
+   case "signout":
       $_SESSION["ID"] = null;
       header("Location: http://www.threescript.com");
+      break;
    case "signin":
       // echo "SIGNIN: $operation <br/>";
       if (isset($nickname_or_email) && isset($password)) {
@@ -105,9 +105,9 @@ switch ($operation) {
       break;
 }
 
-function linkDatabase() {
-   $link = mysql_connect("localhost", "rptcombr_admin_1", "?Rpt64629402");
-   mysql_select_db('rptcombr_s3d_01', $link);
+function linkDatabase_() {
+   $link = mysql_connect("localhost", "user_name", "user_password");
+   mysql_select_db('db_name', $link);
    return $link;
 }
 

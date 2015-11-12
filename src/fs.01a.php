@@ -40,13 +40,18 @@ class fs {
    }
 
    public function lst($id, $with_root = false) {
+      $userNode = substr($id, 0, 5) === 'users';
+      $exampleNode = substr($id, 0, 8) === 'examples';
+
+      $readonly = !($userNode || ($exampleNode && $_SESSION[USERADMIN]));
+
       $dir = $this->path($id);
       $lst = @scandir($dir);
       if (!$lst) {
          throw new Exception('Could not list path: ' . $dir);
       }
       $res = array();
-      // echo "id: '$id'<br>";
+
       foreach ($lst as $item) {
          if ($item == '.' || $item == '..' || $item === null) {
             continue;
@@ -59,21 +64,25 @@ class fs {
             continue;
          }
          if (($id === "users") && (!$_SESSION["ID"])) {
-             continue;
+            continue;
          }
          if (is_dir($dir . DIRECTORY_SEPARATOR . $item)) {
             $res[] = array(
                 'text' => $item,
                 'children' => true,
                 'id' => $this->id($dir . DIRECTORY_SEPARATOR . $item),
-                'icon' => 'folder');
+                'icon' => 'folder',
+                'data' => array('readonly' => $readonly),
+            );
          } else {
             $res[] = array(
                 'text' => $item,
                 'children' => false,
                 'id' => $this->id($dir . DIRECTORY_SEPARATOR . $item),
-                'type' => 'file', 'icon' =>
-                'file file-' . substr($item, strrpos($item, '.') + 1));
+                'type' => 'file',
+                'icon' => 'file file-' . substr($item, strrpos($item, '.') + 1),
+                'data' => array('readonly' => $readonly),
+            );
          }
       }
       if ($with_root && $this->id($dir) === '/') {
@@ -82,6 +91,7 @@ class fs {
                  'text' => basename($this->base),
                  'children' => $res, 'id' => '/',
                  'icon' => 'folder',
+                 'data' => array('readonly' => $readonly),
                  'state' => array(
                      'opened' => true,
                      'disabled' => true)));
@@ -90,16 +100,23 @@ class fs {
    }
 
    public function data($id) {
+      $userNode = substr($id, 0, 5) === 'users';
+      $exampleNode = substr($id, 0, 8) === 'examples';
+
+      $readonly = !($userNode || ($exampleNode && $_SESSION[USERADMIN]));
+
       if (strpos($id, ":")) {
          $id = array_map(array($this, 'id'), explode(':', $id));
          return array(
              'type' => 'multiple',
+             'data' => array('readonly' => $readonly),
              'content' => 'Multiple selected: ' . implode(' ', $id));
       }
       $dir = $this->path($id);
       if (is_dir($dir)) {
          return array(
              'type' => 'folder',
+             'data' => array('readonly' => $readonly),
              'content' => $id);
       }
       if (is_file($dir)) {
@@ -108,6 +125,7 @@ class fs {
              'type' => $ext,
              'fn' => $dir,
              'fd' => $ext,
+             'data' => array('readonly' => $readonly),
              'content' => '');
          switch ($ext) {
             case 'txt':

@@ -35,7 +35,7 @@ function prepareTree() {
       },
       'contextmenu': {
          'items': function(node) {
-            if (node.id === "users" || node.id === "examples" || node.id === 'help') {
+            if (node.data.readonly || node.id === "users" || node.id === "examples" || node.id === 'help') {
                return;
             }
             var tmp = $.jstree.defaults.contextmenu.items();
@@ -131,10 +131,16 @@ function prepareTree() {
          data.instance.refresh();
       });
    }).on('changed.jstree', function(e, data) {
+      disableButtons();
+      /*
+      $("#btn-save").css("display", "none");
+      $("#btn-run").css("display", "none");
+      */
       if (data && data.selected && data.selected.length) {
          selectedData = data;
          // selectedDataNodeId = data.node.id;
          $.get('?operation=get_content&id=' + data.selected.join(':'), function(d) {
+            enableButtons(d);
             if (d && typeof d.type !== 'undefined') {
                $('#data .content').hide();
                switch (d.type) {
@@ -149,6 +155,11 @@ function prepareTree() {
                   case 'json':
                   case 'css':
                   case 'html':
+                     /*
+                     if (!d.data.readonly)
+                        $("#btn-save").css("display", "block");
+                     $("#btn-run").css("display", "block");
+                     */
                      $('#data .code').show();
                      editor.setValue(d.content);
                      editor.gotoLine(1);
@@ -181,20 +192,82 @@ function prepareTree() {
 }
 
 var editor = null;
+var editor_session = null;
+
+function disableButtons() {
+   $("#btn-save").css("display", "none");
+   $("#btn-run").css("display", "none");
+   $("#btn-new-folder").css("display", "none");
+   $("#btn-new-file").css("display", "none");
+   $("#btn-rename").css("display", "none");
+   $("#btn-delete").css("display", "none");
+   $("#btn-upload").css("display", "none");
+}
+
+function enableButtons(node) {
+   if (node.type === "js") {
+      $("#btn-run").css("display", "block");
+   }
+   if (!node.data.readonly) {
+      $("#btn-rename").css("display", "block");
+      $("#btn-delete").css("display", "block");
+      if (node.type === "js") {
+         $("#btn-save").css("display", "block");
+      }
+      if ((data.type === "folder")) {
+         $("#btn-new-folder").css("display", "block");
+         $("#btn-new-file").css("display", "block");
+         $("#btn-upload").css("display", "block");
+      }
+   }
+}
 
 $(function() {
    $(window).resize(function() {
-      var h = Math.max($(window).height() - 0, 420);
-      $('#container, #data, #tree, #data .content').height(h).filter('.default').css('lineHeight', h + 'px');
+      // var h = Math.max($("#container-parent").height() - 0, 420);
+      // $('#container, #data, #tree, #data .content').height(h).filter('.default').css('lineHeight', h + 'px');
    }).resize();
 
    prepareTree();
-
+   
+   disableButtons();
+/*
+   $("#btn-save").css("display", "none");
+   $("#btn-run").css("display", "none");
+*/
    editor = ace.edit("editor");
    editor.setTheme("ace/theme/twilight");
-   editor.getSession().setMode("ace/mode/javascript");
+   editor_session = editor.getSession();
+   editor_session.setMode("ace/mode/javascript");
+   editor_session.on("changeAnnotation", function() {
+      var annot = editor.getSession().getAnnotations();
+      var lines = "";
+      var str = "";
+      var sep = "";
+      var num = 0;
+      for (var key in annot) {
+         if (annot.hasOwnProperty(key)) {
+            lines = lines + sep + annot[key].row;
+            str = str + sep + annot[key].text + " (" + annot[key].row + ")";
+            sep = "/";
+            num++;
+         }
+      }
+      var print = num;
+      if (num)
+         print += ": " + lines;
+      $("#errors").val(num + lines);
+   });
 
-   $("#save").click(function(e) {
+   $("#btn-run").click(function(e) {
+      var form = $("#form-run");
+      $("#nickname").val(session_nickname);
+      $("#userid").val(session_userid);
+      $("#filename").val(selectedData.node.id);
+      form.submit();
+   });
+
+   $("#btn-save").click(function(e) {
       $.ajax({
          url: "save.php",
          method: "POST",
@@ -212,12 +285,19 @@ $(function() {
       });
    });
 
-   $("#run").click(function(e) {
-      var form = $("#form-run");
-      $("#nickname").val(session_nickname);
-      $("#userid").val(session_userid);
-      $("#filename").val(selectedData.node.id);
-      form.submit();
+   $("#btn-new-folder").click(function(e) {
+   });
+
+   $("#btn-new-file").click(function(e) {
+   });
+
+   $("#btn-delete").click(function(e) {
+   });
+
+   $("#btn-rename").click(function(e) {
+   });
+
+   $("#btn-upload").click(function(e) {
    });
 
    $("#signin").click(function(e) {
@@ -294,3 +374,55 @@ $(function() {
 
    $('#data .code').show();
 });
+
+function demo_create() {
+   var ref = $('#jstree').jstree(true);
+   var sel = ref.get_selected();
+   if (!sel.length) {
+      return false;
+   }
+   sel = sel[0];
+   sel = ref.create_node(sel, {"type": "file"});
+   if (sel) {
+      ref.edit(sel);
+   }
+}
+
+function demo_rename() {
+   var ref = $('#jstree_demo').jstree(true),
+           sel = ref.get_selected();
+   if (!sel.length) {
+      return false;
+   }
+   sel = sel[0];
+   ref.edit(sel);
+}
+
+function demo_delete() {
+   var ref = $('#jstree_demo').jstree(true),
+           sel = ref.get_selected();
+   if (!sel.length) {
+      return false;
+   }
+   ref.delete_node(sel);
+}
+
+function compileCode() {
+   try {
+      var result = iframeWindow.eval(code)
+   } catch (e) {
+      alert(e.message());
+   }
+}
+
+function compileCode2() {
+   // grabbed from http://stackoverflow.com/questions/6432984/adding-script-element-to-the-dom-and-have-the-javascript-run
+   var script = document.createElement('script');
+   try {
+      script.appendChild(document.createTextNode(code));
+      document.body.appendChild(script);
+   } catch (e) {
+      script.text = code;
+      document.body.appendChild(script);
+   }
+}

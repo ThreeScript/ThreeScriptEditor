@@ -90,7 +90,7 @@ require("operation.01a.php");
                </div>
                <div id="tree-bottom">
                   <form id="form-upload" action="#" enctype="multipart/form-data" >
-                     <!--a id="upload" href="#" class="pl button button-primary button-small">Upload</a-->
+                     <!--a id="upload" href="#" class="fl button button-primary button-small">Upload</a-->
                      <input id="file-upload" name="file-upload" type="file" class="button button-primary button-small"/>
                   </form>
                </div>
@@ -117,7 +117,7 @@ require("operation.01a.php");
                      <input id="nickname" name="nickname" type="hidden" value=""/>
                      <input id="filename" name="filename" type="hidden" value=""/>
                   </form>
-                  <a id="save" href="#" class="pl button button-primary button-small">Save</a>
+                  <a id="save" href="#" class="fl button button-primary button-small">Save</a>
                   <a id="run" href="#" class="button button-primary button-small">Run</a>
                </div>
             </div>

@@ -7,8 +7,9 @@
       <meta name="viewport" content="width=device-width" />
 
       <script src="/oslib/js/jquery/jquery-1.11.3.js"></script>
+      <script src="/master/ThreeScript/build/tsthreejs-r72.js"></script>
 
-      <script src="/oslib/js/threejs/r72/build/three.min.js"></script>
+      <!--script src="/oslib/js/threejs/r72/build/three.min.js"></script>
       <script src="/oslib/js/threejs/r72/examples/js/utils/GeometryUtils.js"></script>
 
       <script src="/oslib/js/threejs/r72/examples/js/shaders/ConvolutionShader.js"></script>
@@ -27,7 +28,8 @@
 
       <script src="/oslib/js/threejs/r72/examples/js/Detector.js"></script>
       <script src="/oslib/js/threejs/r72/examples/js/controls/TrackballControls.js"></script>
-      <script src="/oslib/js/threejs/r72/examples/js/libs/stats.min.js"></script>
+      <script src="/oslib/js/threejs/r72/examples/js/controls/FirstPersonControls.js"></script>
+      <script src="/oslib/js/threejs/r72/examples/js/libs/stats.min.js"></script-->
 
       <script src="/oslib/js/threejs/r72/examples/fonts/gentilis_bold.typeface.js"></script>
       <script src="/oslib/js/threejs/r72/examples/fonts/gentilis_regular.typeface.js"></script>
@@ -43,54 +45,68 @@
       <link href="/oslib/js/unicorn-ui.com/css/font-awesome.min.css" rel="stylesheet" />
       <link href="/oslib/js/unicorn-ui.com/css/buttons.css" rel="stylesheet" />
       <script src="/oslib/js/unicorn-ui.com/js/buttons.js"></script>
-
-      <?echo "<script src='$threescriptSrcDir/cameras/cameras.js'></script>\n";?>
-      <?echo "<script src='$threescriptSrcDir/container/container.js'></script>\n";?>
-      <?echo "<script src='$threescriptSrcDir/core/core.js'></script>\n";?>
-      <?echo "<script src='$threescriptSrcDir/examples/js/effects.js'></script>\n";?>
-      <?echo "<script src='$threescriptSrcDir/extras/extras.js'></script>\n";?>
-      <?echo "<script src='$threescriptSrcDir/extras/geometries/geometries.js'></script>\n";?>
-      <?echo "<script src='$threescriptSrcDir/lights/lights.js'></script>\n";?>
-      <?echo "<script src='$threescriptSrcDir/loaders/loaders.js'></script>\n";?>
-      <?echo "<script src='$threescriptSrcDir/materials/materials.js'></script>\n";?>
-      <?echo "<script src='$threescriptSrcDir/math/math.js'></script>\n";?>
-      <?echo "<script src='$threescriptSrcDir/meshes/meshes.js'></script>\n";?>
-      <?echo "<script src='$threescriptSrcDir/objects/objects.js'></script>\n";?>
-      <?echo "<script src='$threescriptSrcDir/renderers/renderers.js'></script>\n";?>
-      <?echo "<script src='$threescriptSrcDir/scenes/scenes.js'></script>\n";?>
-      <?echo "<script src='$threescriptSrcDir/textures/textures.js'></script>\n";?>
-
-      <script>
-         function init_ts() {
-            try {
-<?php
-
-$filename = $_REQUEST["filename"];
-
-$userid = $_REQUEST["userid"];
-
-$nickname = $_REQUEST["nickname"];
-
-$url = dirname(__DOCUMENT_ROOT__) . "/";
-
-$filepath = "$url/$filename";
-
-$file = fopen($filepath, "r");
-if ($file) {
-   while (($line = fgets($file)) !== false)
-      echo $line;
-   fclose($file);
-}
-?>
-            }
-            catch (err) {
-               alert('error: ' + err.message);
-               alert('stack: ' + err.stack);
-               alert('line: ' + err.line);
-            }
+      
+      <style>
+         .ts {
+            position: absolute; 
+            left: 0px; 
+            top: 0px; 
+            right: 0px; 
+            bottom: 0px; 
+            margin: 0px; 
+            padding: 0px;
+            border: 0px;
+            background: transparent;
          }
-      </script>
+      </style>
+
+      <? echo "<script src='$threescriptSrcDir/cameras/cameras.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/container/container.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/core/core.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/examples/js/controls.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/examples/js/effects.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/extras/extras.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/extras/geometries/geometries.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/lights/lights.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/loaders/loaders.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/materials/materials.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/math/math.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/meshes/meshes.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/objects/objects.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/renderers/renderers.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/scenes/scenes.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/textures/textures.js'></script>\n"; ?>
+
+      <?php
+      echo "      
+<script>
+   function init_ts() {
+      try {
+";
+
+      $filename = $_REQUEST["filename"];
+
+      $url = dirname(__DOCUMENT_ROOT__) . "/";
+
+      $filepath = "$url/$filename";
+
+      $file = fopen($filepath, "r");
+      if ($file) {
+         while (($line = fgets($file)) !== false)
+            echo $line;
+         fclose($file);
+      }
+      echo "
+      }
+      catch (err) {
+         alert('error: ' + err.message);
+         alert('stack: ' + err.stack);
+         alert('line: ' + err.line);
+      }
+   }
+</script>";
+      ?>
    </head>
-   <body onload="init_ts();" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px;">
+   <body onload="init_ts();" class="ts">
    </body>
 </html>
