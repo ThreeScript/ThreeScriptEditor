@@ -35,7 +35,7 @@ html, body {
 .bgs {
    background: #ffffff;
    border: 1px solid #000000;
-    padding: 2px;
+   padding: 2px;
 }
 
 #panel-top {
@@ -50,7 +50,7 @@ html, body {
 #panel-container {
    display: block;
    position: absolute;
-   top: 100px;
+   top: 38px;
    left: 0px;
    right: 0px;
    bottom: 100px;
@@ -112,7 +112,7 @@ html, body {
    left: 0px;
    bottom: 0px;
    right: 0px;
-   height: 90px;
+   height: 27px;
    padding: 5px; 
    border-right: 1px solid silver; 
    overflow: hidden; 
@@ -221,3 +221,50 @@ html, body {
 }
 */
 
+#logo {
+   height: 55px;
+   width: 262px;
+   top: 10px;
+   left: 5px;
+   z-index: 10;
+   background: #ddd;
+   border: 1px solid #000;
+   padding: 7px;
+   box-shadow: 0px 0px 5px #000;
+   border-radius: 35px;
+}
+
+#logo-ts {
+   float: left;
+   top: -1px;
+   left: -1px;
+   background: #Fc0;
+   height: 52px;
+   width: 40px;
+   padding: 0px 0px 0px 10px;
+   box-shadow: 1px 1px 5px #888;
+   border: 2px solid #f88;
+   border-radius: 30px;
+   margin-right: 13px;
+}
+.t {
+   position: relative;
+   float: left;
+   font-family: Rockwell, Verdana, Arial;
+   font-size: 40px;
+   font-style: italic;
+   color: #484;
+   /* text-shadow: 1px 1px 5px #888; */
+}
+.s {
+   position: relative;
+   float: left;
+   font-family: Copperplate, 'Copperplate Gothic Light', fantasy;
+   font-size: 30px;
+   font-style: oblique;
+   font-weight: bold;
+   top: 20px;
+   left: -6px;
+   color: #448;
+   /* text-shadow: 1px 1px 5px #888; */
+}

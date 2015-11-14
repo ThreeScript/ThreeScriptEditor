@@ -59,7 +59,7 @@ function addScriptList() {
       <script src="/oslib/js/unicorn-ui.com/js/buttons.js"></script>
       
       <style>
-         .ts {
+         body, html {
             position: absolute; 
             left: 0px; 
             top: 0px; 
@@ -69,6 +69,7 @@ function addScriptList() {
             padding: 0px;
             border: 0px;
             background: transparent;
+            overflow: hidden;
          }
       </style>
 
@@ -89,6 +90,7 @@ function addScriptList() {
       <? echo "<script src='$threescriptSrcDir/scenes/scenes.js'></script>\n"; ?>
       <? echo "<script src='$threescriptSrcDir/textures/textures.js'></script>\n"; ?>
 
+      <? echo "<script src='$threescriptSrcDir/locale/pt_BR/all.js'></script>\n"; ?>
       <?php
       echo "      
 <script>

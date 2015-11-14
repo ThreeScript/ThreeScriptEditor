@@ -141,8 +141,8 @@ function providerButton($name, $title) {
 
 function formLogin() {
    $operation = "<input id='operation' type='hidden' name='operation' value=''>";
-   $nickname = formField("Nickname or Email", "text", "nickname", "nickname", "");
-   $password = formField("Password", "password", "password", "password", "");
+   $nickname = formField(_("Nickname or Email"), "text", "nickname", "nickname", "");
+   $password = formField(_("Password"), "password", "password", "password", "");
    $buttons = providersButtons();
    $str = "
       <form id='form-signin' action='?'>
@@ -152,8 +152,8 @@ function formLogin() {
             $nickname
             $password
             <div class='pr form-buttons'>
-               <div class='pr fl'><a id='signin' href='#' rel='Sign-in' class='pr button button-primary button-big'>Sign-in</a></div>
-               <div class='pr fl ml5'><a id='register' href='#' rel='Register' class='pr button button-primary button-big'>Register</a></div>
+               <div class='pr fl'><a id='signin' href='#' rel='Sign-in' class='pr button button-primary button-big'>"._("Sign In")."</a></div>
+               <div class='pr fl ml5'><a id='register' href='#' rel='Register' class='pr button button-primary button-big'>"._("Register")."</a></div>
                $buttons
             </div>
          </div>
@@ -163,16 +163,16 @@ function formLogin() {
 
 function formRegister($provider, $nickname, $firstname, $lastname, $email, $provider_user_id) {
    $operation = "<input id='operation' type='hidden' name='operation' value=''>";
-   $nickname = formField("Nickname", "text", "nickname", "nickname", "");
-   $firstname = formField("First name", "text", "firstname", "firstname", $firstname);
-   $lastname = formField("Last name", "text", "lastname", "lastname", $lastname);
-   $email = formField("Email", "text", "email", "email", $email);
+   $nickname = formField(_("Nickname"), "text", "nickname", "nickname", "");
+   $firstname = formField(_("First Name"), "text", "firstname", "firstname", $firstname);
+   $lastname = formField(_("Last Name"), "text", "lastname", "lastname", $lastname);
+   $email = formField(_("Email"), "text", "email", "email", $email);
    if ($provider)
       $email2 = "";
    else
-      $email2 = formField("Retype email", "text", "email2", "email2", "");
-   $password = formField("Password", "password", "password", "password", "");
-   $password2 = formField("Retype Password", "password", "password2", "password2", "");
+      $email2 = formField(_("Retype Email"), "text", "email2", "email2", "");
+   $password = formField(_("Password"), "password", "password", "password", "");
+   $password2 = formField(_("Retype Password"), "password", "password2", "password2", "");
    $buttons = providersButtons();
    $str = "
       <form id='form-signin' action='?'>
@@ -199,7 +199,7 @@ function formRegister($provider, $nickname, $firstname, $lastname, $email, $prov
 function mysql_query_exec($link, $sql) {
    $result = mysql_query($sql, $link);
    if (!$result)
-      die(printf("Error: %s\n", mysql_error($link)));
+      die(printf(_("Error: %s\n"), mysql_error($link)));
    return $result;
 }
 
@@ -280,7 +280,7 @@ function create_new_user($link, $nickname, $firstname, $lastname, $email, $passw
 ?>
 <html>
    <head>
-      <title>signin or Register</title>
+      <title><?echo _('Signin or Register');?></title>
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
       <meta name="viewport" content="width=device-width" />

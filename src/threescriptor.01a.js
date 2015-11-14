@@ -40,11 +40,11 @@ function prepareTree() {
             }
             var tmp = $.jstree.defaults.contextmenu.items();
             delete tmp.create.action;
-            tmp.create.label = "New";
+            tmp.create.label = tstrans.New;
             tmp.create.submenu = {
                "create_folder": {
                   "separator_after": true,
-                  "label": "Folder",
+                  "label": tstrans.Folder,
                   "action": function(data) {
                      var inst = $.jstree.reference(data.reference);
                      var obj = inst.get_node(data.reference);
@@ -56,7 +56,7 @@ function prepareTree() {
                   }
                },
                "create_file": {
-                  "label": "File",
+                  "label": tstrans.File,
                   "action": function(data) {
                      var inst = $.jstree.reference(data.reference);
                      var obj = inst.get_node(data.reference);
@@ -68,7 +68,7 @@ function prepareTree() {
                   }
                },
                "upload_file": {
-                  "label": "Upload",
+                  "label": tstrans.Upload,
                   "action": function(data) {
                      $("#file-upload").click();
                   }
@@ -77,6 +77,13 @@ function prepareTree() {
             if (this.get_type(node) === "file") {
                delete tmp.create;
             }
+            tmp.ccp.label = tstrans.Edit;
+            tmp.ccp.submenu.copy.label = tstrans.Copy;
+            tmp.ccp.submenu.cut.label = tstrans.Cut;
+            tmp.ccp.submenu.paste.label = tstrans.Paste;
+            tmp.create.label = tstrans.Create;
+            tmp.rename.label = tstrans.Rename;
+            tmp.remove.label = tstrans.Remove;
             return tmp;
          }
       },
@@ -214,7 +221,7 @@ function enableButtons(node) {
       if (node.type === "js") {
          $("#btn-save").css("display", "block");
       }
-      if ((data.type === "folder")) {
+      if ((node.type === "folder")) {
          $("#btn-new-folder").css("display", "block");
          $("#btn-new-file").css("display", "block");
          $("#btn-upload").css("display", "block");
