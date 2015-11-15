@@ -33,7 +33,7 @@ switch ($operation) {
    case "signin":
       // echo "SIGNIN: $operation <br/>";
       if (isset($nickname_or_email) && isset($password)) {
-         $link = linkDatabase() or die("Connection error!");
+         $link = linkDatabase() or die(_("Connection error!"));
          $qry = get_user_by_nickname_or_email($link, $nickname_or_email);
          $user = mysql_fetch_assoc($qry);
          $password_crypt = cryptPassword($user["nickname"], $password);
@@ -46,7 +46,7 @@ switch ($operation) {
             $_SESSION["EMAIL"] = $user["email"];
             header("Location: http://www.threescript.com");
          } else {
-            $error_msg = "Wrong nickname, email or password.";
+            $error_msg = _("Wrong nickname, email or password.");
             $form_login = formLogin();
          }
       } else {
@@ -116,7 +116,7 @@ function formField($field_title, $field_type, $field_id, $field_name, $field_val
    $str .= "<div class='pr fl form-field-label-div'>$field_title</div>";
    $str .= "<div class='pr fl form-field-input-div'>
       <input id='$field_id' type='$field_type' name='$field_name' 
-      value='$field_value' class='form-field-input'/></div>";
+      value='$field_value' placeholder='$field_title' class='form-field-input'/></div>";
    $str .= "</div>";
    return $str;
 }
@@ -147,7 +147,7 @@ function formLogin() {
    $str = "
       <form id='form-signin' action='?'>
          <div id='form-signin-div' class='pr'>
-            <div class='pr form-title'>Sign-in</div>
+            <div class='pr form-title'>"._("Sign-in")."</div>
             $operation
             $nickname
             $password
@@ -177,7 +177,7 @@ function formRegister($provider, $nickname, $firstname, $lastname, $email, $prov
    $str = "
       <form id='form-signin' action='?'>
          <div id='form-register-div' class='pr'>
-            <div class='form-title'>Register</div>
+            <div class='form-title'>"._("Register")."</div>
             $operation
             $nickname
             $firstname

@@ -90,7 +90,7 @@
          } else {
             echo "<form id='form-signin' action='signin.php' method='post'>";
             echo "<input id='operation' type='hidden' name='operation'></input>";
-            echo "<div class='top-div-item'>" . _("Nickname or e-mail") . "</div>";
+            echo "<div class='top-div-item'>" . _("Nickname or Email") . "</div>";
             echo "<div class='top-div-item'><input type='text' name='nickname_or_email'></input></div>";
             echo "<div class='top-div-item'>" . _("Password") . "</div>";
             echo "<div class='top-div-item'><input type='password' name='password'></input></div>";
