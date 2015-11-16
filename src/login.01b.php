@@ -1,5 +1,4 @@
 <?php
-
 if ($_SESSION["ID"]) {
    header("Location: http://www.threescript.com");
 }
@@ -44,6 +43,9 @@ switch ($operation) {
             $_SESSION["FIRSTNAME"] = $user["firstname"];
             $_SESSION["LASTNAME"] = $user["lastname"];
             $_SESSION["EMAIL"] = $user["email"];
+            if (!is_dir("users/" . $_SESSION["NICKNAME"])) {
+               $ok = mkdir("users/" . $_SESSION["NICKNAME"]);
+            }
             header("Location: http://www.threescript.com");
          } else {
             $error_msg = _("Wrong nickname, email or password.");
@@ -122,6 +124,9 @@ function formField($field_title, $field_type, $field_id, $field_name, $field_val
 }
 
 function providersButtons() {
+   $disable_buttons = true;
+   if ($disable_buttons)
+      return "";
    $f = providerButton("facebook", "Facebook");
    $t = providerButton("twitter", "Twitter");
    $l = providerButton("linkedin", "Linkedin");
@@ -144,16 +149,17 @@ function formLogin() {
    $nickname = formField(_("Nickname or Email"), "text", "nickname", "nickname", "");
    $password = formField(_("Password"), "password", "password", "password", "");
    $buttons = providersButtons();
+
    $str = "
       <form id='form-signin' action='?'>
          <div id='form-signin-div' class='pr'>
-            <div class='pr form-title'>"._("Sign-in")."</div>
+            <div class='pr form-title'>" . _("Sign In") . "</div>
             $operation
             $nickname
             $password
             <div class='pr form-buttons'>
-               <div class='pr fl'><a id='signin' href='#' rel='Sign-in' class='pr button button-primary button-big'>"._("Sign In")."</a></div>
-               <div class='pr fl ml5'><a id='register' href='#' rel='Register' class='pr button button-primary button-big'>"._("Register")."</a></div>
+               <div class='pr fl'><a id='signin' href='#' rel='" . _("Sign In") . "' class='pr button button-primary button-big'>" . _("Sign In") . "</a></div>
+               <div class='pr fl ml5'><a id='register' href='#' rel='" . _("Register") . "Register' class='pr button button-primary button-big'>" . _("Register") . "</a></div>
                $buttons
             </div>
          </div>
@@ -173,11 +179,13 @@ function formRegister($provider, $nickname, $firstname, $lastname, $email, $prov
       $email2 = formField(_("Retype Email"), "text", "email2", "email2", "");
    $password = formField(_("Password"), "password", "password", "password", "");
    $password2 = formField(_("Retype Password"), "password", "password2", "password2", "");
+
    $buttons = providersButtons();
+
    $str = "
       <form id='form-signin' action='?'>
          <div id='form-register-div' class='pr'>
-            <div class='form-title'>"._("Register")."</div>
+            <div class='form-title'>" . _("Register") . "</div>
             $operation
             $nickname
             $firstname
@@ -187,8 +195,8 @@ function formRegister($provider, $nickname, $firstname, $lastname, $email, $prov
             $password
             $password2
             <div class='pr form-buttons'>
-               <div class='pr fl ml5'><a id='save-register' href='#' rel='Save Register' class='pr button button-primary button-big'>Save Register</a></div>
-               <div class='pr fl' style='margin-left: 10px'><a id='signin' href='#' rel='Sign-in' class='pr button button-primary button-big'>Sign-in</a></div>
+               <div class='pr fl ml5'><a id='save-register' href='#' rel='" . _("Save Register") . "' class='pr button button-primary button-big'>" . _("Save Register") . "</a></div>
+               <div class='pr fl' style='margin-left: 10px'><a id='signin' href='#' rel='" . _("Sign In") . "' class='pr button button-primary button-big'>" . _("Sign In") . "</a></div>
                $buttons
             </div>
          </div>
@@ -275,12 +283,15 @@ function create_new_user($link, $nickname, $firstname, $lastname, $email, $passw
          '$password_crypt',
          NOW())"
    );
+   if ($ok && !is_dir("users/$nickname"))
+      $ok = mkdir("users/$nickname");
    return $ok;
 }
 ?>
+
 <html>
    <head>
-      <title><?echo _('Signin or Register');?></title>
+      <title><? echo _('Signin or Register'); ?></title>
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
       <meta name="viewport" content="width=device-width" />
@@ -340,7 +351,7 @@ function create_new_user($link, $nickname, $firstname, $lastname, $email, $passw
             var val = nickname.val().trim();
             if (acceptEmpty && (val === ''))
                return true;
-            var ok = validateNickname(val, 8);
+            var ok = validateNickname(val, 4);
             return test(ok, nickname, 'Invalid nickname!');
          }
 
@@ -360,10 +371,26 @@ function create_new_user($link, $nickname, $firstname, $lastname, $email, $passw
             return test(ok, email, 'Invalid email!');
          }
 
+         function testRetypeEmail(email, email2, acceptEmpty) {
+            var val2 = email2.val().trim();
+            if (acceptEmpty && (val2 === ''))
+               return true;
+            var ok = val2 === email.val().trim();
+            return test(ok, email2, 'Retype the same email!');
+         }
+
          function testPassword(password, acceptEmpty) {
             var val = password.val().trim();
-            var ok = (acceptEmpty || val !== '') && validatePassword(val, 4);
+            var ok = acceptEmpty || ((val !== '') && validatePassword(val, 4));
             return test(ok, password, 'Invalid password or weak password!');
+         }
+
+         function testRetypePassword(password, password2, acceptEmpty) {
+            var val2 = password2.val().trim();
+            if (acceptEmpty && (val2 === ''))
+               return true;
+            var ok = val2 === password.val().trim();
+            return test(ok, password2, 'Retype the same password!');
          }
 
          function prepareBlurEvents() {
@@ -380,21 +407,13 @@ function create_new_user($link, $nickname, $firstname, $lastname, $email, $passw
                testEmail(email, true);
             });
             email2.blur(function(e) {
-               if (email.val() !== email2.val()) {
-                  alert('Retype the same email!');
-                  email2.focus();
-                  return;
-               }
+               testRetypeEmail(email, email2, true);
             });
             password.blur(function(e) {
                testPassword(password, true);
             });
             password2.blur(function(e) {
-               if (password.val() !== password2.val()) {
-                  alert('Retype the same password!');
-                  password2.focus();
-                  return;
-               }
+               testRetypePassword(password, password2, true);
             });
          }
          $(function() {
@@ -421,41 +440,20 @@ function create_new_user($link, $nickname, $firstname, $lastname, $email, $passw
                form.submit();
             });
             $("#save-register").click(function(e) {
-               if (!testNickname(nickname, false))
-                  return;
-               if (!testName(firstname, false))
-                  return;
-               if (!testName(lastname, false))
-                  return;
-               var email = $("#email");
-               if (!validateEmail(email.val())) {
-                  alert('Invalid email!');
-                  email.focus();
-                  return;
+               var ok =
+                       testNickname(nickname, false) &&
+                       testName(firstname, false) &&
+                       testName(lastname, false) &&
+                       testEmail(email, true) &&
+                       testRetypeEmail(email, email2, false) &&
+                       testPassword(email, true) &&
+                       testRetypePassword(email, email2, false);
+               if (ok) {
+                  var form = $("#form-signin");
+                  var input = $("#operation");
+                  input.val("save-register");
+                  form.submit();
                }
-               var email2 = $("#email2");
-               if (email.val() !== email2.val()) {
-                  alert('Retype the same email!');
-                  email2.focus();
-                  return;
-               }
-               var password = $("#password");
-               var pwval = password.val().trim();
-               if ((pwval === '') || !validatePassword(pwval, 4)) {
-                  alert('Invalid password or weak!');
-                  password.focus();
-                  return;
-               }
-               var password2 = $("#password2");
-               if (password.val() !== password2.val()) {
-                  alert('Retype the same password!');
-                  password2.focus();
-                  return;
-               }
-               var form = $("#form-signin");
-               var input = $("#operation");
-               input.val("save-register");
-               form.submit();
             });
          });
       </script>

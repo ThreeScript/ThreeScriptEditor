@@ -40,10 +40,11 @@ class fs {
    }
 
    public function lst($id, $with_root = false) {
-      $userNode = substr($id, 0, 5) === 'users';
-      $exampleNode = substr($id, 0, 8) === 'examples';
-
-      $readonly = !($userNode || ($exampleNode && $_SESSION[USERADMIN]));
+      $isUserNode = substr($id, 0, 5) === 'users';
+      $isHelpNode = substr($id, 0, 4) === 'help';
+      $isExampleNode = substr($id, 0, 8) === 'examples';
+      
+      $readonly = ($id === "/") || ($id === "#") || (!$isUserNode); // || ($isExampleNode && $_SESSION[USERADMIN]);
 
       $dir = $this->path($id);
       $lst = @scandir($dir);
@@ -63,9 +64,8 @@ class fs {
          if ($id === "/" && (($item !== 'examples') && ($item !== 'help') && ($item !== 'users'))) {
             continue;
          }
-         if (($id === "users") && (!$_SESSION["ID"])) {
-            continue;
-         }
+         if (($id === "users") && ((!$_SESSION["ID"]) || ($item !== $_SESSION["NICKNAME"])))
+                  continue;
          if (is_dir($dir . DIRECTORY_SEPARATOR . $item)) {
             $res[] = array(
                 'text' => $item,
@@ -98,12 +98,12 @@ class fs {
       }
       return $res;
    }
-
+   
    public function data($id) {
-      $userNode = substr($id, 0, 5) === 'users';
-      $exampleNode = substr($id, 0, 8) === 'examples';
+      $isUserNode = substr($id, 0, 5) === 'users';
+      $isExampleNode = substr($id, 0, 8) === 'examples';
 
-      $readonly = !($userNode || ($exampleNode && $_SESSION[USERADMIN]));
+      $readonly = ($id === "/") || ($id === "users") || (!$isUserNode); // || ($isExampleNode && $_SESSION[USERADMIN]);
 
       if (strpos($id, ":")) {
          $id = array_map(array($this, 'id'), explode(':', $id));
