@@ -73,24 +73,25 @@ function addScriptList() {
          }
       </style>
 
-      <? echo "<script src='$threescriptSrcDir/cameras/cameras.js'></script>\n"; ?>
-      <? echo "<script src='$threescriptSrcDir/container/container.js'></script>\n"; ?>
-      <? echo "<script src='$threescriptSrcDir/core/core.js'></script>\n"; ?>
-      <? echo "<script src='$threescriptSrcDir/examples/js/controls.js'></script>\n"; ?>
-      <? echo "<script src='$threescriptSrcDir/examples/js/effects.js'></script>\n"; ?>
-      <? echo "<script src='$threescriptSrcDir/extras/extras.js'></script>\n"; ?>
-      <? echo "<script src='$threescriptSrcDir/extras/geometries/geometries.js'></script>\n"; ?>
-      <? echo "<script src='$threescriptSrcDir/lights/lights.js'></script>\n"; ?>
-      <? echo "<script src='$threescriptSrcDir/loaders/loaders.js'></script>\n"; ?>
-      <? echo "<script src='$threescriptSrcDir/materials/materials.js'></script>\n"; ?>
-      <? echo "<script src='$threescriptSrcDir/math/math.js'></script>\n"; ?>
-      <? echo "<script src='$threescriptSrcDir/meshes/meshes.js'></script>\n"; ?>
-      <? echo "<script src='$threescriptSrcDir/objects/objects.js'></script>\n"; ?>
-      <? echo "<script src='$threescriptSrcDir/renderers/renderers.js'></script>\n"; ?>
-      <? echo "<script src='$threescriptSrcDir/scenes/scenes.js'></script>\n"; ?>
-      <? echo "<script src='$threescriptSrcDir/textures/textures.js'></script>\n"; ?>
+      <?echo "<script src='$threescriptSrcDir/ts/ts.js'></script>\n"; ?>
+      <?echo "<script src='$threescriptSrcDir/cameras/cameras.js'></script>\n"; ?>
+      <?echo "<script src='$threescriptSrcDir/container/container.js'></script>\n"; ?>
+      <?echo "<script src='$threescriptSrcDir/core/core.js'></script>\n"; ?>
+      <?echo "<script src='$threescriptSrcDir/examples/js/controls.js'></script>\n"; ?>
+      <?echo "<script src='$threescriptSrcDir/examples/js/effects.js'></script>\n"; ?>
+      <?echo "<script src='$threescriptSrcDir/extras/extras.js'></script>\n"; ?>
+      <?echo "<script src='$threescriptSrcDir/extras/geometries/geometries.js'></script>\n"; ?>
+      <?echo "<script src='$threescriptSrcDir/lights/lights.js'></script>\n"; ?>
+      <?echo "<script src='$threescriptSrcDir/loaders/loaders.js'></script>\n"; ?>
+      <?echo "<script src='$threescriptSrcDir/materials/materials.js'></script>\n"; ?>
+      <?echo "<script src='$threescriptSrcDir/math/math.js'></script>\n"; ?>
+      <?echo "<script src='$threescriptSrcDir/meshes/meshes.js'></script>\n"; ?>
+      <?echo "<script src='$threescriptSrcDir/objects/objects.js'></script>\n"; ?>
+      <?echo "<script src='$threescriptSrcDir/renderers/renderers.js'></script>\n"; ?>
+      <?echo "<script src='$threescriptSrcDir/scenes/scenes.js'></script>\n"; ?>
+      <?echo "<script src='$threescriptSrcDir/textures/textures.js'></script>\n"; ?>
 
-      <? echo "<script src='$threescriptSrcDir/locale/pt_BR/all.js'></script>\n"; ?>
+      <?echo "<script src='$threescriptSrcDir/locale/pt_BR/all.js'></script>\n";?>
       <?php
       echo "      
 <script>
