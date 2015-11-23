@@ -7,18 +7,18 @@ class fs {
    public function __construct($base) {
       $this->base = $this->real($base);
       if (!$this->base) {
-         throw new Exception('Base directory does not exist');
+         throw new Exception(_('Base directory does not exist'));
       }
    }
 
    protected function real($path) {
       $temp = realpath($path);
       if (!$temp) {
-         throw new Exception('Path does not exist: ' . $path);
+         throw new Exception(_('Path does not exist: ') . $path);
       }
       if ($this->base && strlen($this->base)) {
          if (strpos($temp, $this->base) !== 0) {
-            throw new Exception('Path is not inside base (' . $this->base . '): ' . $temp);
+            throw new Exception(_('Path is not inside base (' . $this->base . '): ') . $temp);
          }
       }
       return $temp;
@@ -243,7 +243,6 @@ class fs {
       }
       return array('id' => $this->id($new));
    }
-
 }
 
 ?>

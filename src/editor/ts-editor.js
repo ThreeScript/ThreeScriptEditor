@@ -1,4 +1,4 @@
-// var selectedDataNodeId = null;
+
 var selectedData = null;
 var editor = null;
 var editor_session = null;
@@ -55,6 +55,10 @@ function btnRemoveFolderOrFile() {
       return false;
    jstree.delete_node(sel);
    return true;
+}
+
+function confirmAndRemove(data) {
+   
 }
 
 function prepareTree() {
@@ -138,7 +142,7 @@ function prepareTree() {
             var previous_remove_action = tmp.remove.action;
             tmp.remove.action = function(data) {
                BootstrapDialog.show({
-                  message: 'Confirme remove file!',
+                  message: 'Confirm remove file!',
                   buttons: [{
                      icon: 'glyphicon glyphicon-ban-circle',
                      label: 'Confirm. (Are you sure? Click here, so!)',
@@ -287,8 +291,6 @@ function enableButtons(node) {
 
 $(function() {
    $(window).resize(function() {
-      // var h = Math.max($("#container-parent").height() - 0, 420);
-      // $('#container, #data, #tree, #data .content').height(h).filter('.default').css('lineHeight', h + 'px');
    }).resize();
 
    prepareTree();
@@ -324,6 +326,8 @@ $(function() {
          $("#data-status-3").html("");
       }
    });
+   
+   $("#editor").addClass("abs0000");
 
    $("#btn-run").click(function(e) {
       var form = $("#form-run");

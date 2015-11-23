@@ -1,0 +1,161 @@
+.pr{
+   position: relative;
+}
+.fl {
+   float: left;
+}
+.ml5 {
+   margin-left: 5px
+}
+.pt0 {
+   padding-top: 0px;
+}
+.or-use {
+   margin: 10px 30px 0px 50px;
+   font-size: 14px;
+   text-shadow: 0px 0px 1px #000;
+}
+#signin-or-register {
+   width: 600px;
+   min-width: 600px;
+   max-width: 600px;
+   margin: auto;
+}
+#form-signin-or-register {
+   width: 600px;
+   min-width: 600px;
+   max-width: 600px;
+   font-family: Verdana, Arial, Times New Roman;
+   font-size: 24px;
+   background: rgba(255, 238, 68, 0.1);
+   margin: auto;
+   height: auto;
+   padding: 12px;
+   text-shadow: 0px 0px 1px #000;
+   border-radius: 25px;
+   box-shadow: 0px 0px 10px #000;
+   border: 5px solid rgba(255, 136, 0, 0.2);
+}
+#form-signin {
+   margin-bottom: 0px;
+}
+.form-title {
+   background: #ec0;
+   padding: 5px 5px 10px 13px;
+   margin-bottom: 10px;
+   border: 1px solid #000;
+   border-radius: 5px;
+   box-shadow: 0px 0px 10px #000;
+   text-shadow: 0px 0px 5px #000;
+   font-size: 58px;
+}
+.form-buttons {
+   height: 40px;
+   font-size: 58px;
+   background: #F5EAAA;
+   padding: 16px 5px 10px 13px;
+   margin-bottom: 10px;
+   border: 1px solid #000;
+   border-radius: 5px;
+   box-shadow: 0px 0px 10px #000;
+   text-shadow: 0px 0px 5px #000;
+}
+.form-field {
+   background: #ddd;
+   height: 51px;
+   padding: 5px 5px 2px 5px;
+   border-radius: 5px;
+   box-shadow: 0px 0px 6px #000;
+   margin-bottom: 10px;
+}
+.form-field-label-div {
+   float: left;
+   width: 245px;
+   height: 31px;
+   color: #ff0;
+   background: #080;
+   padding: 10px 5px 5px 5px;
+   border: 1px solid #000;
+   border-radius: 5px;
+   box-shadow: 0px 0px 3px #000;
+   text-shadow: 0px 0px 6px #000;
+}
+
+.form-field-input-div {
+   background: #00f;
+   width: 301px;
+   margin-left: 5px;
+   background: #f80;
+   border: 1px solid #000;
+   border-radius: 5px;
+   box-shadow: 0px 0px 3px #000;
+}      
+
+.form-field-input {
+   background: #ddf;
+   margin: 5px;
+   padding-top: 2px;
+   padding-left: 5px;
+   font-family: Verdana, Arial, 'Times New Roman';
+   font-size: 24px;
+   width: 290px;
+   text-shadow: 0px 0px 1px #000;
+}
+
+#form-signin-div {
+   padding: 12px;
+}
+
+.social-button {
+   top: -16px;
+}
+
+#logo {
+   height: 55px;
+   width: 262px;
+   top: 10px;
+   left: 5px;
+   z-index: 10;
+   background: #ddd;
+   border: 1px solid #000;
+   padding: 7px;
+   box-shadow: 0px 0px 5px #000;
+   border-radius: 35px;
+}
+
+#logo-ts {
+   float: left;
+   top: -1px;
+   left: -1px;
+   background: #Fc0;
+   height: 52px;
+   width: 40px;
+   padding: 0px 0px 0px 10px;
+   box-shadow: 1px 1px 5px #888;
+   border: 2px solid #f88;
+   border-radius: 30px;
+   margin-right: 13px;
+}
+
+.t {
+   position: relative;
+   float: left;
+   font-family: Rockwell, Verdana, Arial;
+   font-size: 40px;
+   font-style: italic;
+   color: #484;
+   /* text-shadow: 1px 1px 5px #888; */
+}
+
+.s {
+   position: relative;
+   float: left;
+   font-family: Copperplate, 'Copperplate Gothic Light', fantasy;
+   font-size: 30px;
+   font-style: oblique;
+   font-weight: bold;
+   top: 20px;
+   left: -6px;
+   color: #448;
+   /* text-shadow: 1px 1px 5px #888; */
+}

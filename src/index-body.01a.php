@@ -3,7 +3,7 @@
    <head>
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-      <title>Threescriptor</title>
+      <title>TS Editor</title>
       <meta name="viewport" content="width=device-width" />
 
       <script src="/oslib/js/jquery/jquery-1.11.3.js"></script>

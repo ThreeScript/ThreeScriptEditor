@@ -36,22 +36,20 @@ if (isset($operation)) {
             $rslt = $fs->remove($node);
             break;
          case 'move_node':
-            $parn = getParent($parent);
-            $rslt = $fs->move($node, $parn);
+            $rslt = $fs->move($node, getParent($parent));
             break;
          case 'copy_node':
-            $parn = getParent($parent);
-            $rslt = $fs->copy($node, $parn);
+            $rslt = $fs->copy($node, getParent($parent));
             break;
          default:
-            throw new Exception('Unsupported operation: ' . $operation);
+            throw new Exception(_('Unsupported operation: ') . $operation);
             break;
       }
       header('Content-Type: application/json; charset=utf-8');
       echo json_encode($rslt);
    } catch (Exception $e) {
       header($_SERVER["SERVER_PROTOCOL"] . ' 500 Server Error');
-      header('Status:  500 Server Error');
+      header(_('Status:  500 Server Error'));
       echo $e->getMessage();
    }
    die();
