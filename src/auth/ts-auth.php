@@ -47,7 +47,7 @@ switch ($operation) {
             if (!is_dir($dir)) {
                $ok = mkdir($dir);
             }
-            header("Location: index.php");
+            header("Location: http://www.threescript.com");
          } else {
             $error_msg = _("Wrong nickname, email or password.");
             $form_login = formLogin();
@@ -107,6 +107,8 @@ switch ($operation) {
       $form_login = formLogin();
       break;
 }
+
+// initialize_i18n(substr($_SERVER["HTTP_ACCEPT_LANGUAGE"], 0, 5));
 
 function linkDatabase_() {
    $link = mysql_connect("localhost", "user_name", "user_password");
@@ -287,15 +289,11 @@ function providerButton($name, $title) {
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
       <meta name="viewport" content="width=device-width" />
       <script src="/oslib/js/jquery/jquery-1.11.3.js"></script>
-      <link rel="stylesheet" href="/oslib/js/unicorn-ui.com/css/font-awesome.min.css" />
-      <link rel="stylesheet" href="/oslib/js/unicorn-ui.com/css/buttons.css" />
+      <link href="/oslib/js/unicorn-ui.com/css/font-awesome.min.css" rel="stylesheet" />
+      <link href="/oslib/js/unicorn-ui.com/css/buttons.css" rel="stylesheet" />
       <script src="/oslib/js/unicorn-ui.com/js/buttons.js"></script>
-      <script>
-
-      </script>
-      <style>
-
-      </style>
+      <?= "<script src='$threescriptEditorSrcDir/auth/ts-auth.js'></script>" ?>
+      <?= "<link href='$threescriptEditorSrcDir/auth/ts-auth.css'  rel='stylesheet'/>" ?>
    </head>
    <body>
       <div id="signin-or-register" class="pr">

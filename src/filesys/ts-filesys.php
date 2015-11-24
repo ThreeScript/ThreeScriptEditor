@@ -98,9 +98,9 @@ class fs {
 
    public function data($id) {
       $isUserNode = substr($id, 0, 5) === 'users';
-      $isExampleNode = substr($id, 0, 8) === 'examples';
+      $isExamplesNode = substr($id, 0, 8) === 'examples';
 
-      $readonly = ($id === "/") || ($id === "users") || (!$isUserNode); // || ($isExampleNode && $_SESSION[USERADMIN]);
+      $readonly = ($id === "/") || ($id === "users") || (!$isUserNode); // || ($isExamplesNode && $_SESSION[USERADMIN]);
 
       if (strpos($id, ":")) {
          $id = array_map(array($this, 'id'), explode(':', $id));

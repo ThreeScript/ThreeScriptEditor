@@ -1,6 +1,5 @@
 <?php
 
-
 function formField($field_title, $field_type, $field_id, $field_name, $field_value) {
    $str = "<div class='pr form-field'>";
    $str .= "<div class='pr fl form-field-label-div'>$field_title</div>";
@@ -12,4 +11,3 @@ function formField($field_title, $field_type, $field_id, $field_name, $field_val
 }
 
 ?>
-

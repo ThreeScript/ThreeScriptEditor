@@ -57,7 +57,7 @@
                <?php
                if (isset($userid)) {
                   echo "
-                     <form id='form-signout' action='signin.php' method='post'>
+                     <form id='form-signout' action='?auth' method='post'>
                      <div class='top-div-item'>$firstname</div>
                      <input id='operation' type='hidden' name='operation'></input>
                      <div class='top-div-item button button-primary button-tiny'>
@@ -65,7 +65,7 @@
                   </form>";
                } else {
                   echo "
-                     <form id='form-signin' action='signin.php' method='post'>
+                     <form id='form-signin' action='?auth' method='post'>
                      <input id='operation' type='hidden' name='operation'></input>
                      <div class='top-div-item'>" . _("Nickname or Email") . "</div>
                      <div class='top-div-item'><input type='text' name='nickname_or_email'></input></div>
@@ -127,7 +127,7 @@
                <!--a id="upload" href="#" class="fl button button-primary button-small">Upload</a-->
                <input id="file-upload" name="file-upload" type="file" class="button button-primary button-small" style="display: none"/>
             </form>
-            <form id="form-run" action="run.php" method="post" target="_blank">
+            <form id="form-run" action="?run" method="post" target="_blank">
                <input id="userid" name="userid" type="hidden" value=""/>
                <input id="nickname" name="nickname" type="hidden" value=""/>
                <input id="filename" name="filename" type="hidden" value=""/>
