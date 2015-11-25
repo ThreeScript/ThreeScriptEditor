@@ -53,12 +53,30 @@ function btnRemoveFolderOrFile() {
    var sel = jstree.get_selected();
    if (!sel.length)
       return false;
-   jstree.delete_node(sel);
+   confirmAndRemove(sel, function(sel, dialogItself) {
+      jstree.delete_node(sel);
+      dialogItself.close();
+   });
    return true;
 }
 
-function confirmAndRemove(data) {
-   
+function confirmAndRemove(callbackObject, callback) {
+   BootstrapDialog.show({
+      message: 'Confirm remove file!',
+      buttons: [{
+            icon: 'glyphicon glyphicon-ban-circle',
+            label: 'Confirm. (Are you sure? Click here, so!)',
+            cssClass: 'btn-warning',
+            action: function(dialogItself) {
+               callback(callbackObject, dialogItself);
+            }
+         }, {
+            label: 'Close',
+            action: function(dialogItself) {
+               dialogItself.close();
+            }
+         }]
+   });
 }
 
 function prepareTree() {
@@ -140,25 +158,13 @@ function prepareTree() {
             tmp.rename.label = tstrans.Rename;
             tmp.remove.label = tstrans.Remove;
             var previous_remove_action = tmp.remove.action;
-            tmp.remove.action = function(data) {
-               BootstrapDialog.show({
-                  message: 'Confirm remove file!',
-                  buttons: [{
-                     icon: 'glyphicon glyphicon-ban-circle',
-                     label: 'Confirm. (Are you sure? Click here, so!)',
-                     cssClass: 'btn-warning',
-                     action: function() {
-                        previous_remove_action(data);
-                        dialogItself.close();
-                     }
-                  }, {
-                     label: 'Close',
-                     action: function(dialogItself) {
-                        dialogItself.close();
-                     }
-                  }]
+            function remove_action(data) { 
+               confirmAndRemove(data,function(data, dialogItself) {
+                  previous_remove_action(data);
+                  dialogItself.close();
                });
-            };
+            }
+            tmp.remove.action = remove_action;
             return tmp;
          }
       },
@@ -267,7 +273,7 @@ function disableButtons() {
    $("#btn-new-folder").css("display", "none");
    $("#btn-new-file").css("display", "none");
    $("#btn-rename").css("display", "none");
-   $("#btn-delete").css("display", "none");
+   $("#btn-remove").css("display", "none");
    $("#btn-upload").css("display", "none");
 }
 
@@ -277,7 +283,7 @@ function enableButtons(node) {
    }
    if (!node.data.readonly) {
       $("#btn-rename").css("display", "block");
-      $("#btn-delete").css("display", "block");
+      $("#btn-remove").css("display", "block");
       if (node.type === "js") {
          $("#btn-save").css("display", "block");
       }
@@ -326,7 +332,7 @@ $(function() {
          $("#data-status-3").html("");
       }
    });
-   
+
    $("#editor").addClass("abs0000");
 
    $("#btn-run").click(function(e) {
@@ -363,7 +369,7 @@ $(function() {
       btnCreateFolderOrFile(createFile);
    });
 
-   $("#btn-delete").click(function(e) {
+   $("#btn-remove").click(function(e) {
       btnRemoveFolderOrFile();
    });
 

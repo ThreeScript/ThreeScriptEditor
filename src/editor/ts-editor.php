@@ -91,13 +91,7 @@
             <div id="panel-container-data" class="panel-default">
                <div id="data" class="panel-body">
                   <div class="content code abs0000 dn">
-                     <pre id="editor" class="abs0000x" style="
-   position: absolute;
-   left: 0px;
-   top: 0px;
-   right: 0px;
-   bottom: 0px;
-   margin: 0px;">
+                     <pre id="editor" class="abs0000" style="position: absolute">
                      </pre>
                   </div>
                   <div class="content folder abs0000 dn">               
@@ -137,7 +131,7 @@
             <a id="btn-new-folder" href="#" class="fl ml5 button button-primary button-small"><? echo _("New Folder"); ?></a>
             <a id="btn-new-file" href="#" class="fl ml5 button button-primary button-small"><? echo _("New File"); ?></a>
             <a id="btn-rename" href="#" class="fl ml5 button button-primary button-small"><? echo _("Rename"); ?></a>
-            <a id="btn-delete" href="#" class="fl ml5 button button-primary button-small"><? echo _("Delete"); ?></a>
+            <a id="btn-remove" href="#" class="fl ml5 button button-primary button-small"><? echo _("Delete"); ?></a>
             <a id="btn-upload" href="#" class="fl ml5 button button-primary button-small"><? echo _("Upload"); ?></a>
          </div>
       </div>
