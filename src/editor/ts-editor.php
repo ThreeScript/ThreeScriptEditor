@@ -10,22 +10,10 @@
       <link rel="stylesheet" href="/oslib/js/unicorn-ui.com/css/font-awesome.min.css" />
       <link rel="stylesheet" href="/oslib/js/unicorn-ui.com/css/buttons.css" />
       <?= "<link href='$threescriptEditorSrcDir/editor/ts-editor.css' rel='stylesheet'>"; ?>      <script src="/oslib/js/jquery/jquery-1.11.3.js"></script>
-      <script src="/oslib/js/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-      <script src="/oslib/js/bootstrap3-dialog/1.34.6/dist/js/bootstrap-dialog.js"></script>
-      <script src="/oslib/js/unicorn-ui.com/js/buttons.js"></script>
-      <script src="/oslib/js/jstree/3.2.1/dist/jstree.min.js"></script>
-      <script src="/oslib/js/ace.c9.com/ace-builds.2.2.0/src-noconflict/ace.js" charset="utf-8"></script>
-      <?= "<script src='$threescriptEditorSrcDir/editor/ts-editor.js'></script>" ?>
-      <?
-      $useFacebook = false;
-      if ($useFacebook) {
-         echo "<script src='$threescriptEditorSrcDir/ts-facebook.js'></script>";
-      }
-      ?>
    </head>
    <body>
       <script>
-         <?= "
+<?= "
          var d = tsg.user.data = {
             id: '$userid',
             nickname: '$nickname',
@@ -33,7 +21,7 @@
             lastname: '$lastname',
             email: '$email'
          };";
-         ?>
+?>
          tsg.locale = {
             New: "<?= _("New"); ?>",
             Folder: "<?= _("Folder"); ?>",
@@ -152,6 +140,20 @@
             <a id="btn-upload" href="#" class="fl ml5 button button-primary button-small"><? echo _("Upload"); ?></a>
          </div>
       </div>
+      <?= "<script src='$threescriptEditorSrcDir/google/ts-analytics.js'></script>" ?>
+      <script src="/oslib/js/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+      <script src="/oslib/js/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+      <script src="/oslib/js/bootstrap3-dialog/1.34.6/dist/js/bootstrap-dialog.js"></script>
+      <script src="/oslib/js/unicorn-ui.com/js/buttons.js"></script>
+      <script src="/oslib/js/jstree/3.2.1/dist/jstree.min.js"></script>
+      <script src="/oslib/js/ace.c9.com/ace-builds.2.2.0/src-noconflict/ace.js" charset="utf-8"></script>
+      <?
+      echo "<script src='$threescriptEditorSrcDir/editor/ts-editor.js'></script>";
+      $useFacebook = false;
+      if ($useFacebook) {
+         echo "<script src='$threescriptEditorSrcDir/ts-facebook.js'></script>";
+      }
+      ?>
    </body>
 </html>
 

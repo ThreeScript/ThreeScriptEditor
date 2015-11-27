@@ -16,45 +16,8 @@ function addScriptList() {
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
       <title>Run</title>
       <meta name="viewport" content="width=device-width" />
+      <?= "<script src='$threescriptEditorSrcDir/google/ts-analytics.js'></script>" ?>
 
-      <?php
-      echo "      
-<script>
-   function init_ts() {
-      try {
-";
-
-      $filename = $_REQUEST["filename"];
-
-      $url = dirname(__DOCUMENT_ROOT__) . "/";
-
-      $filepath = "$url/$filename";
-
-      $file = fopen($filepath, "r");
-      if ($file) {
-         while (($line = fgets($file)) !== false)
-            echo $line;
-         fclose($file);
-      }
-      echo "
-            }
-            catch (err) {
-               $('body').append(
-                  '<div class=\'error\'>'+
-                  '<table>' +
-                  '<tr><td>error</></td><td>' + err.message + '</td></tr>' +
-                  '<tr><td>stack</></td><td>' + err.stack + '</td></tr>' +
-                  '<tr><td>line</></td><td>' + err.line + '</td></tr>' +
-                  '</table>' +
-                  '</div>');
-            }
-         }
-      </script>
-   </head>
-   <body onload='init_ts();' class='ts'>
-   </body>
-</html>";
-      ?>
       <script src="/oslib/js/jquery/jquery-1.11.3.js"></script>
       <!--script src="/master/ThreeScript/build/tsthreejs-r73.js"></script-->
 
@@ -98,6 +61,44 @@ function addScriptList() {
       <link href="/oslib/js/unicorn-ui.com/css/buttons.css" rel="stylesheet" />
       <script src="/oslib/js/unicorn-ui.com/js/buttons.js"></script>
 
+      <?php
+      echo "      
+<script>
+   function init_ts() {
+      try {
+";
+
+      $filename = $_REQUEST["filename"];
+
+      $url = dirname(__DOCUMENT_ROOT__) . "/";
+
+      $filepath = "$url/$filename";
+
+      $file = fopen($filepath, "r");
+      if ($file) {
+         while (($line = fgets($file)) !== false)
+            echo $line;
+         fclose($file);
+      }
+      echo "
+            }
+            catch (err) {
+               $('body').append(
+                  '<div class=\'error\'>'+
+                  '<table>' +
+                  '<tr><td>error</></td><td>' + err.message + '</td></tr>' +
+                  '<tr><td>stack</></td><td>' + err.stack + '</td></tr>' +
+                  '<tr><td>line</></td><td>' + err.line + '</td></tr>' +
+                  '</table>' +
+                  '</div>');
+            }
+         }
+      </script>
+   </head>
+   <body onload='init_ts();' class='ts'>
+   </body>
+</html>";
+      ?>
       <style>
          body, html {
             position: absolute; 
