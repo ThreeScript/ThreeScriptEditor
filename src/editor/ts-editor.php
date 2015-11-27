@@ -25,12 +25,16 @@
    </head>
    <body>
       <script>
-         var session_userid = "<?= $userid ?>";
-         var session_nickname = "<?= $nickname ?>";
-         var session_firstname = "<?= $firstname ?>";
-         var session_lastname = "<?= $lastname ?>";
-         var session_email = "<?= $email ?>";
-         var tstrans = {
+         <?= "
+         var d = tsg.user.data = {
+            id: '$userid',
+            nickname: '$nickname',
+            firstname: '$firstname',
+            lastname: '$lastname',
+            email: '$email'
+         };";
+         ?>
+         tsg.locale = {
             New: "<?= _("New"); ?>",
             Folder: "<?= _("Folder"); ?>",
             File: "<?= _("File"); ?>",
@@ -84,7 +88,7 @@
             <div id="panel-container-tree" class="panel-default">
                <div id="tree" class="panel-body"></div>
                <div id="tree-status" class="panel-footer">
-                  <div id="tree-status-1" class="bgs abs0000">
+                  <div id="id-status-tree" class="status-item abs0000">
                   </div>
                </div>
             </div>
@@ -107,11 +111,23 @@
                   </div>
                </div>
                <div id="data-status" class="panel-footer">
-                  <div id="data-status-1" class="bgs fl ml5 abs0000" style="right: 40px; ">
+                  <div id="id-status-save" class="status-item" style="width: 50px; ">
                   </div>
-                  <div id="data-status-2" class="bgs fl ml5 abs0000" style="left: 45px; right: 90px;">
+                  <div id="id-status-row" class="status-item" style="width: 30px; ">
+                     row
                   </div>
-                  <div id="data-status-3" class="bgs fl ml5 abs0000" style="left: 95px;">
+                  <div id="id-status-row-num" class="status-item" style="width: 35px; ">
+                  </div>
+                  <div id="id-status-col" class="status-item" style="width: 30px; ">
+                     col
+                  </div>
+                  <div id="id-status-col-num" class="status-item" style="width: 35px; ">
+                  </div>
+                  <div id="id-status-errors" class="status-item" style="width: 60px">
+                  </div>
+                  <div id="id-status-info-warnings" class="status-item" style="width: 110px;">
+                  </div>
+                  <div id="id-status-annotations" class="status-item" style="width: 200px;">
                   </div>
                </div>
             </div>

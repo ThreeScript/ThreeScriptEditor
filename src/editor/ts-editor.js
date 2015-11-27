@@ -1,7 +1,80 @@
+var tsg = ts_global = {
+   aceEditor: {
+      editor: null,
+      session: null,
+      undo_manager: null,
+      editing: false,
+      changed: false
+   },
+   tree: {
+      selected_data: null,
+      selected_content_data: null
+   },
+   file: {
+      runnable: false
+   },
+   user: {
+      data: {
+         id: null,
+         nickname: null,
+         firstname: null,
+         lastname: null
+      }
+   }
+};
 
-var selectedData = null;
-var editor = null;
-var editor_session = null;
+function prepareEditor() {
+   var ae = tsg.aceEditor;
+   ae.editor = ace.edit("editor");
+   ae.editor.setTheme("ace/theme/twilight");
+   ae.session = tsg.aceEditor.editor.getSession();
+   ae.undo_manager = tsg.aceEditor.session.getUndoManager();
+   ae.session.setMode("ace/mode/javascript");
+   onChangeCursor(ae);
+   onChangeAnnotation(ae);
+}
+
+function onChangeCursor() {
+   var ae = tsg.aceEditor;
+   ae.session.selection.on("changeCursor", function(e) {
+      var c = ae.editor.selection.getCursor();
+      if (c) {
+         $("#id-status-row-num").html(c.row + 1);
+         $("#id-status-col-num").html(c.column + 1);
+      }
+   });
+}
+function onChangeAnnotation() {
+   var ae = tsg.aceEditor;
+   ae.session.on("changeAnnotation", function() {
+      var sep = "";
+      var annotationStr = "";
+      var errorCount = 0;
+      var infoWarningCount = 0;
+      var annotations = ae.session.getAnnotations();
+      for (var key in annotations) {
+         var annotation = annotations[key];
+         annotationStr += sep + annotation.row;
+         if (annotations.hasOwnProperty(key)) {
+            if (annotation.type === "error") {
+               errorCount++;
+            } else if (annotation.type === "info" || annotation.type === "warning") {
+               infoWarningCount++;
+            }
+            // str = str + sep + annotation.text + " (" + nextrow + ")";
+            sep = "/";
+         }
+      }
+      $("#id-status-errors").html(errorCount ? errorCount + " error(s)" : "no errors");
+      $("#id-status-info-warnings").html(infoWarningCount ? infoWarningCount + " info/warning(s) at" : "no info/warnings");
+      $("#id-status-annotations").html(annotationStr);
+      ae.changed = !ae.undo_manager.isClean();
+      if (ae.changed)
+         $("#id-status-save").html("SAVE!");
+      else
+         $("#id-status-save").html("OK");
+   });
+}
 
 function createFile(reference) {
    var inst = $.jstree.reference(reference);
@@ -55,7 +128,6 @@ function btnRemoveFolderOrFile() {
       return false;
    confirmAndRemove(sel, function(sel, dialogItself) {
       jstree.delete_node(sel);
-      dialogItself.close();
    });
    return true;
 }
@@ -69,10 +141,32 @@ function confirmAndRemove(callbackObject, callback) {
             cssClass: 'btn-warning',
             action: function(dialogItself) {
                callback(callbackObject, dialogItself);
+               dialogItself.close();
             }
          }, {
             label: 'Close',
             action: function(dialogItself) {
+               dialogItself.close();
+            }
+         }]
+   });
+}
+
+function confirmAndSave(callbackObject, callbackConfirmed, callbackDiscard, callbackCancel) {
+   BootstrapDialog.show({
+      message: 'Confirm save file!',
+      buttons: [{
+            icon: 'glyphicon glyphicon-ban-circle',
+            label: 'Save file?',
+            cssClass: 'btn-info',
+            action: function(dialogItself) {
+               callbackConfirmed(callbackObject, dialogItself);
+               dialogItself.close();
+            }
+         }, {
+            label: 'Discard changes',
+            action: function(dialogItself) {
+               callbackDiscard(callbackObject, dialogItself);
                dialogItself.close();
             }
          }]
@@ -124,24 +218,24 @@ function prepareTree() {
                return false;
             var tmp = $.jstree.defaults.contextmenu.items();
             delete tmp.create.action;
-            tmp.create.label = tstrans.New;
+            tmp.create.label = tsg.locale.New;
             tmp.create.submenu = {
                "create_folder": {
                   "separator_after": true,
-                  "label": tstrans.Folder,
-                  "action": function(data) {
-                     createFolder(data.reference);
+                  "label": tsg.locale.Folder,
+                  "action": function(nodeData) {
+                     createFolder(nodeData.reference);
                   }
                },
                "create_file": {
-                  "label": tstrans.File,
-                  "action": function(data) {
-                     createFile(data.reference);
+                  "label": tsg.locale.File,
+                  "action": function(nodeData) {
+                     createFile(nodeData.reference);
                   }
                },
                "upload_file": {
-                  "label": tstrans.Upload,
-                  "action": function(data) {
+                  "label": tsg.locale.Upload,
+                  "action": function(nodeData) {
                      $("#file-upload").click();
                   }
                }
@@ -149,18 +243,18 @@ function prepareTree() {
             if (this.get_type(node) === "file") {
                delete tmp.create;
             }
-            tmp.ccp.label = tstrans.Edit;
-            tmp.ccp.submenu.copy.label = tstrans.Copy;
-            tmp.ccp.submenu.cut.label = tstrans.Cut;
-            tmp.ccp.submenu.paste.label = tstrans.Paste;
+            tmp.ccp.label = tsg.locale.Edit;
+            tmp.ccp.submenu.copy.label = tsg.locale.Copy;
+            tmp.ccp.submenu.cut.label = tsg.locale.Cut;
+            tmp.ccp.submenu.paste.label = tsg.locale.Paste;
             if (tmp.create)
-               tmp.create.label = tstrans.Create;
-            tmp.rename.label = tstrans.Rename;
-            tmp.remove.label = tstrans.Remove;
+               tmp.create.label = tsg.locale.Create;
+            tmp.rename.label = tsg.locale.Rename;
+            tmp.remove.label = tsg.locale.Remove;
             var previous_remove_action = tmp.remove.action;
-            function remove_action(data) { 
-               confirmAndRemove(data,function(data, dialogItself) {
-                  previous_remove_action(data);
+            function remove_action(nodeData) {
+               confirmAndRemove(nodeData, function(ajaxData, dialogItself) {
+                  previous_remove_action(nodeData);
                   dialogItself.close();
                });
             }
@@ -178,91 +272,66 @@ function prepareTree() {
          }
       },
       'plugins': ['state', 'dnd', 'sort', 'types', 'contextmenu', 'unique']
-   }).on('delete_node.jstree', function(e, data) {
-      $.get('?operation=delete_node', {'id': data.node.id}).fail(function() {
-         data.instance.refresh();
+   }).on('delete_node.jstree', function(e, nodeData) {
+      $.get('?operation=delete_node', {'id': nodeData.node.id}).fail(function() {
+         nodeData.instance.refresh();
       });
-   }).on('create_node.jstree', function(e, data) {
-      $.get('?operation=create_node', {'type': data.node.type, 'id': data.node.parent, 'text': data.node.text})
-              .done(function(d) {
-         data.instance.set_id(data.node, d.id);
+   }).on('create_node.jstree', function(e, nodeData) {
+      $.get('?operation=create_node', {'type': nodeData.node.type, 'id': nodeData.node.parent, 'text': nodeData.node.text})
+              .done(function(content_data) {
+         nodeData.instance.set_id(nodeData.node, content_data.id);
       }).fail(function() {
-         data.instance.refresh();
+         nodeData.instance.refresh();
       });
-   }).on('rename_node.jstree', function(e, data) {
-      if (data.old === 'help')
-         data.text = 'help';
-      if (data.old === 'examples')
-         data.text = 'examples';
-      if (data.old === 'users')
-         data.text = 'users';
-      $.get('?operation=rename_node', {'id': data.node.id, 'text': data.text}).done(function(d) {
-         data.instance.set_id(data.node, d.id);
-         selectedData = data;
-      }).fail(function() {
-         data.instance.refresh();
-      });
-   }).on('move_node.jstree', function(e, data) {
-      $.get('?operation=move_node', {'id': data.node.id, 'parent': data.parent}).done(function(d) {
-         data.instance.refresh();
-      }).fail(function() {
-         data.instance.refresh();
-      });
-   }).on('copy_node.jstree', function(e, data) {
-      $.get('?operation=copy_node', {'id': data.original.id, 'parent': data.parent})
-              .done(function(d) {
-         data.instance.refresh();
-      }).fail(function() {
-         data.instance.refresh();
-      });
-   }).on('changed.jstree', function(e, data) {
-      disableButtons();
-      if (data && data.selected && data.selected.length) {
-         selectedData = data;
-         $.get('?operation=get_content&id=' + data.selected.join(':'), function(d) {
-            enableButtons(d);
-            if (d && typeof d.type !== 'undefined') {
-               $('#data .content').hide();
-               switch (d.type) {
-                  case 'text':
-                  case 'txt':
-                  case 'md':
-                  case 'htaccess':
-                  case 'log':
-                  case 'sql':
-                  case 'php':
-                  case 'js':
-                  case 'json':
-                  case 'css':
-                  case 'html':
-                     $('#data .code').show();
-                     editor.getSession().setValue(d.content);
-                     // editor.gotoLine(1);
-                     // editor.getSession().getUndoManager().reset();
-                     break;
-                  case 'png':
-                  case 'jpg':
-                  case 'jpeg':
-                  case 'bmp':
-                  case 'gif':
-                     $('#data .image img').one('load', function() {
-                        $(this).css({'marginTop': '-' + $(this).height() / 2 + 'px', 'marginLeft': '-' + $(this).width() / 2 + 'px'});
-                     }).attr('src', d.content);
-                     $('#data .image').show();
-                     break;
-                  case 'htm':
-                     $('#data .default').html(d.content).show();
-                     break;
-                  default:
-                     $('#data .default').html(d.content).show();
-                     break;
-               }
-            }
-         });
+   }).on('rename_node.jstree', function(e, nodeData) {
+      switch (nodeData.old) {
+         case 'help':
+         case 'examples':
+         case 'users':
+            nodeData.text = nodeData.old;
+            break;
       }
-      else {
-         $('#data .content').hide();
-         $('#data .default').html('Select a file from the tree.').show();
+      $.get('?operation=rename_node', {'id': nodeData.node.id, 'text': nodeData.text}).done(function(content_data) {
+         nodeData.instance.set_id(nodeData.node, content_data.id);
+         tsg.tree.selected_data = nodeData;
+      }).fail(function() {
+         nodeData.instance.refresh();
+      });
+   }).on('move_node.jstree', function(e, nodeData) {
+      $.get('?operation=move_node', {'id': nodeData.node.id, 'parent': nodeData.parent}).done(function(content_data) {
+         nodeData.instance.refresh();
+      }).fail(function() {
+         nodeData.instance.refresh();
+      });
+   }).on('copy_node.jstree', function(e, nodeData) {
+      $.get('?operation=copy_node', {'id': nodeData.original.id, 'parent': nodeData.parent})
+              .done(function(content_data) {
+         nodeData.instance.refresh();
+      }).fail(function() {
+         nodeData.instance.refresh();
+      });
+   }).on('changed.jstree', function(e, nodeData) {
+      if (tsg.aceEditor.editing && tsg.aceEditor.changed) {
+         confirmAndSave(nodeData,
+                 function() {
+                    saveFile(
+                            function() {
+                               changeNode(nodeData);
+                               $("#id-status-save").html("OK");
+                            },
+                            function() {
+                               changeNode(nodeData);
+                               $("#id-status-save").html("ERROR");
+                            });
+                 },
+                 function() {
+                    changeNode(nodeData);
+                 },
+                 function() {
+                 });
+      } else {
+         changeNode(nodeData);
+         $("#id-status-save").html("OK");
       }
    });
 }
@@ -295,70 +364,33 @@ function enableButtons(node) {
    }
 }
 
-$(function() {
-   $(window).resize(function() {
-   }).resize();
+function submitForm(formId, inputOperation, inputValue) {
+   var form = $("#" + formId);
+   var input = $("#" + inputOperation);
+   if (inputOperation)
+      input.val(inputValue);
+   form.submit();
+}
 
-   prepareTree();
-
-   disableButtons();
-
-   editor = ace.edit("editor");
-   editor.setTheme("ace/theme/twilight");
-   editor_session = editor.getSession();
-   editor_session.setMode("ace/mode/javascript");
-   editor_session.on("changeAnnotation", function() {
-      var annot = editor.getSession().getAnnotations();
-      var lines = "";
-      var str = "";
-      var sep = "";
-      var num = 0;
-      for (var key in annot) {
-         if (annot.hasOwnProperty(key)) {
-            lines = lines + sep + (annot[key].row + 1);
-            str = str + sep + annot[key].text + " (" + annot[key].row + ")";
-            sep = "/";
-            num++;
-         }
-      }
-      if (num) {
-         $("#data-status-1").html("errors");
-         $("#data-status-2").html(num);
-         $("#data-status-3").html(lines);
-      }
-      else {
-         $("#data-status-1").html("ok");
-         $("#data-status-2").html("");
-         $("#data-status-3").html("");
-      }
-   });
-
-   $("#editor").addClass("abs0000");
-
+function buttonsClick() {
    $("#btn-run").click(function(e) {
-      var form = $("#form-run");
-      $("#nickname").val(session_nickname);
-      $("#userid").val(session_userid);
-      $("#filename").val(selectedData.node.id);
-      form.submit();
+      $("#userid").val(tsg.user.data.id);
+      $("#nickname").val(tsg.user.data.nickname);
+      $("#filename").val(tsg.tree.selected_data.node.id);
+      submitForm("form-run");
    });
 
    $("#btn-save").click(function(e) {
-      $.ajax({
-         url: "save.php",
-         method: "POST",
-         dataType: "json",
-         data: {
-            user: session_nickname,
-            fileid: selectedData.node.id,
-            txt: editor.getValue()
-         },
-         success: function(data) {
-         },
-         error: function(err) {
-            alert(err.responseText);
-         }
-      });
+      saveFile(
+              function() {
+                 $("#id-status-save").html("SAVED");
+                  tsg.aceEditor.changed = false;
+                  tsg.aceEditor.undo_manager.markClean();
+                  $("#id-status-save").html("OK");
+              },
+              function() {
+                 $("#id-status-save").html("ERROR");
+              });
    });
 
    $("#btn-new-folder").click(function(e) {
@@ -381,32 +413,78 @@ $(function() {
    });
 
    $("#signin").click(function(e) {
-      var form = $("#form-signin");
-      var input = $("#operation");
-      input.val("signin");
-      form.submit();
+      submitForm("form-signin", "operation", "signin");
+      /*
+       var form = $("#form-signin");
+       var input = $("#operation");
+       input.val("signin");
+       form.submit();
+       */
    });
 
-   $("#signout").click(function(e) {
-      var form = $("#form-signout");
-      var input = $("#operation");
-      input.val("signout");
-      form.submit();
+   $("#signout").click(function() {
+      submitForm("form-signout", "operation", "signout");
+      /*
+       var form = $("#form-signout");
+       var input = $("#operation");
+       input.val("signout");
+       form.submit();
+       */
    });
 
-   $("#register").click(function(e) {
-      var form = $("#form-signin");
-      var input = $("#operation");
-      input.val("register");
-      form.submit();
+   $("#register").click(function() {
+      submitForm("form-signin", "operation", "register");
+      /*
+       var form = $("#form-signin");
+       var input = $("#operation");
+       input.val("register");
+       form.submit();
+       */
    });
+}
+
+function saveFile(sucessCallback, errorCallback) {
+   $.ajax({
+      url: "save.php",
+      method: "POST",
+      dataType: "json",
+      data: {
+         user: tsg.user.data.nickname,
+         fileid: tsg.tree.selected_data.node.id,
+         txt: tsg.aceEditor.editor.getValue()
+      },
+      success: function(data) {
+         if (sucessCallback) {
+            tsg.aceEditor.changed = false;
+            sucessCallback(data);
+         }
+      },
+      error: function(data) {
+         if (errorCallback) {
+            errorCallback(data);
+         }
+      }
+   });
+}
+
+$(function() {
+   $(window).resize(function() {
+   }).resize();
+
+   prepareTree();
+
+   disableButtons();
+
+   prepareEditor(tsg.aceEditor);
+
+   buttonsClick();
 
    var form;
 
    $('#file-upload').change(function(event) {
-      form = new FormData();
-      if (selectedData)
-         form.append('folder', selectedData.node.id);
+      var form = new FormData();
+      if (tsg.tree.selected_data)
+         form.append('folder', tsg.tree.selected_data.node.id);
       form.append('userfile', event.target.files[0]); // para apenas 1 arquivo
       upload(form);
    });
@@ -428,8 +506,8 @@ $(function() {
             if (result.error) {
                alert(result.msg);
             } else {
-               if (selectedData)
-                  selectedData.instance.refresh();
+               if (tsg.tree.selected_data)
+                  tsg.tree.selected_data.instance.refresh();
             }
          },
          cache: false,
@@ -455,9 +533,66 @@ $(function() {
    $('#data .code').show();
 });
 
+function changeNode(nodeData) {
+   disableButtons();
+   if (nodeData && nodeData.selected && nodeData.selected.length) {
+      tsg.tree.selected_data = nodeData;
+      $.get('?operation=get_content&id=' + nodeData.selected.join(':'), function(content_data) {
+         tsg.tree.selected_content_data = content_data;
+         tsg.aceEditor.editing = false;
+         tsg.aceEditor.changed = false;
+         $("#id-status-save").html("OK");
+         tsg.aceEditor.undo_manager.markClean();
+         enableButtons(content_data);
+         $("#id-status-tree").html(nodeData.selected);
+         if (content_data && typeof content_data.type !== 'undefined') {
+            $('#data .content').hide();
+            switch (content_data.type) {
+               case 'text':
+               case 'txt':
+               case 'md':
+               case 'htaccess':
+               case 'log':
+               case 'sql':
+               case 'php':
+               case 'js':
+               case 'json':
+               case 'css':
+               case 'html':
+                  $('#data .code').show();
+                  tsg.aceEditor.editing = true;
+                  tsg.aceEditor.session.setValue(content_data.content);
+                  tsg.aceEditor.editor.setReadOnly(content_data.data.readonly);
+                  break;
+               case 'png':
+               case 'jpg':
+               case 'jpeg':
+               case 'bmp':
+               case 'gif':
+                  $('#data .image img').one('load', function() {
+                     $(this).css({'marginTop': '-' + $(this).height() / 2 + 'px', 'marginLeft': '-' + $(this).width() / 2 + 'px'});
+                  }).attr('src', content_data.content);
+                  $('#data .image').show();
+                  break;
+               case 'htm':
+                  $('#data .default').html(content_data.content).show();
+                  break;
+               default:
+                  $('#data .default').html(content_data.content).show();
+                  break;
+            }
+         }
+      });
+   }
+   else {
+      $('#data .content').hide();
+      $('#data .default').html('Select a file from the tree.').show();
+   }
+}
+
 function compileCode() {
    try {
-      var result = iframeWindow.eval(code)
+      var result = iframeWindow.eval(code);
    } catch (e) {
       alert(e.message());
    }
