@@ -69,7 +69,8 @@
                   </form>";
                } else {
                   echo "
-                     <form id='form-signin' action='?auth' method='post'>
+                     <form id='form-signin' action='?' method='post'>
+                     <input 'hidden' name='auth'>
                      <input id='operation' type='hidden' name='operation'></input>
                      <div class='top-div-item'>" . _("Nickname or Email") . "</div>
                      <div class='top-div-item'><input type='text' name='nickname_or_email'></input></div>

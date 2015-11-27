@@ -609,3 +609,5 @@ function compileCode2() {
       document.body.appendChild(script);
    }
 }
+
+// http://dean.edwards.name/weblog/2006/11/sandbox/

@@ -1,11 +1,11 @@
 <?php
-if ($_SESSION["ID"]) {
-   header("Location: http://www.threescript.com");
-}
-
 $operation = $_REQUEST["operation"];
 if (!isset($operation))
    $operation = 'none';
+
+if ($_SESSION["ID"] && ($operation !== 'signout')) {
+   header("Location: ?");
+}
 
 $nickname_or_email = $_REQUEST["nickname_or_email"];
 $nickname = $_REQUEST["nickname"];
@@ -28,7 +28,7 @@ switch ($operation) {
       }
       session_destroy();
       // $_SESSION["ID"] = null;
-      header("Location: http://www.threescript.com");
+      header("Location: ?");
       break;
    case "signin":
       if (isset($nickname_or_email) && isset($password)) {
@@ -47,7 +47,7 @@ switch ($operation) {
             if (!is_dir($dir)) {
                $ok = mkdir($dir);
             }
-            header("Location: http://www.threescript.com");
+            header("Location: ?");
          } else {
             $error_msg = _("Wrong nickname, email or password.");
             $form_login = formLogin();
@@ -78,7 +78,7 @@ switch ($operation) {
                $_SESSION["ID"] = $user["id"];
                $_SESSION["NICKNAME"] = $user["nickname"];
                $_SESSION["FIRSTNAME"] = $user["firstname"];
-               header("Location: http://www.threescript.com");
+               header("Location: ?");
             } else {
                $firstname = $user_profile->firstName;
                $lastname = $user_profile->lastName;
@@ -100,7 +100,7 @@ switch ($operation) {
       if (!$ok) {
          $form_register = formRegister($provider, $nickname, $firstname, $lastname, $email, $provider_user_id);
       } else {
-         header("Location: http://www.threescript.com");
+         header("Location: ?");
       }
       break;
    default:
