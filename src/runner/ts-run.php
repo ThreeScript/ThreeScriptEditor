@@ -142,3 +142,53 @@ function addScriptList() {
       <? echo "<script src='$threescriptSrcDir/textures/textures.js'></script>\n"; ?>
 
       <? echo "<script src='$threescriptSrcDir/locale/pt_BR/all.js'></script>\n"; ?>
+
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/common/S3dObject3D.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/common/S3dMesh.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/common/S3dPos.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/util/S3dLinkedList.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/util/S3dGeometryStyle.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/util/S3dGeometryStyleChar.js'></script>\n"; ?>
+
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/geometry/S3dBox.js'></script>\n"; ?>
+
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/geometry/S3dPlane.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/geometry/S3dPlaneParam.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/geometry/S3dPlaneChain.js'></script>\n"; ?>
+
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/text/S3dText.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/text/S3dTextParam.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/text/S3dTextChain.js'></script>\n"; ?>
+
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/presentation/S3dPresentation.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/presentation/S3dPresentationFrame.js'></script>\n"; ?>
+
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/richText/S3dRichCtrl.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/richText/S3dRichChain.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/richText/S3dRichChar.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/richText/S3dRichText.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/richText/S3dRichMemo.js'></script>\n"; ?>
+
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/util/S3dEditor.js'></script>\n"; ?>
+
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/sceneMaker/S3dSceneMaker.js'></script>\n"; ?>
+
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/action/S3dAction.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/action/S3dActionMove.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/action/S3dActionMoveOn.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/action/S3dActionMoveTo.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/action/S3dActionRotate.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/action/S3dActionRotateOn.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/action/S3dActionRotateTo.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/action/S3dActionChain.js'></script>\n"; ?>
+
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/site/v2015.r6.1/global.js'></script>\n"; ?>
+      <!--script src="/site/v2015.r6.1/eventos.js"></script-->
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/site/v2015.r6.1/inicio.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/site/v2015.r6.1/animacao.js'></script>\n"; ?>
+      <!--script src="/site/v2015.r6.1/principal.js"></script-->
+
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/site/v2015.r6.1/presentation/studddioPresentation.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/site/v2015.r6.1/presentation/studddioPresentationFrame.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/site/v2015.r6.1/presentation/studddioPresentationParam.js'></script>\n"; ?>
+      <? echo "<script src='$threescriptSrcDir/ts/studddio/site/v2015.r6.1/presentation/startPresentation.js'></script>\n"; ?>
