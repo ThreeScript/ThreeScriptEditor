@@ -10,4 +10,14 @@ function formField($field_title, $field_type, $field_id, $field_name, $field_val
    return $str;
 }
 
+function formFieldBS($field_title, $field_type, $field_id, $field_name, $field_value, $glyphicon) {
+   $str = "<div class='input-group'>";
+   $str .= "<span class='input-group-addon'><i class='glyphicon $glyphicon'></i></span>";
+   $str .= "
+      <input id='$field_id' type='$field_type' name='$field_name' 
+      value='$field_value' placeholder='$field_title' class='form-control'/>";
+   $str .= "</div>";
+   return $str;
+}
+
 ?>

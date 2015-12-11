@@ -1,4 +1,4 @@
-var tsg = ts_global = {
+var ___ts_editor = {
    aceEditor: {
       editor: null,
       session: null,
@@ -24,18 +24,18 @@ var tsg = ts_global = {
 };
 
 function prepareEditor() {
-   var ae = tsg.aceEditor;
+   var ae = ___ts_editor.aceEditor;
    ae.editor = ace.edit("editor");
    ae.editor.setTheme("ace/theme/twilight");
-   ae.session = tsg.aceEditor.editor.getSession();
-   ae.undo_manager = tsg.aceEditor.session.getUndoManager();
+   ae.session = ___ts_editor.aceEditor.editor.getSession();
+   ae.undo_manager = ___ts_editor.aceEditor.session.getUndoManager();
    ae.session.setMode("ace/mode/javascript");
    onChangeCursor(ae);
    onChangeAnnotation(ae);
 }
 
 function onChangeCursor() {
-   var ae = tsg.aceEditor;
+   var ae = ___ts_editor.aceEditor;
    ae.session.selection.on("changeCursor", function(e) {
       var c = ae.editor.selection.getCursor();
       if (c) {
@@ -45,7 +45,7 @@ function onChangeCursor() {
    });
 }
 function onChangeAnnotation() {
-   var ae = tsg.aceEditor;
+   var ae = ___ts_editor.aceEditor;
    ae.session.on("changeAnnotation", function() {
       var sep = "";
       var annotationStr = "";
@@ -218,23 +218,23 @@ function prepareTree() {
                return false;
             var tmp = $.jstree.defaults.contextmenu.items();
             delete tmp.create.action;
-            tmp.create.label = tsg.locale.New;
+            tmp.create.label = ___ts_locale.New;
             tmp.create.submenu = {
                "create_folder": {
                   "separator_after": true,
-                  "label": tsg.locale.Folder,
+                  "label": ___ts_locale.Folder,
                   "action": function(nodeData) {
                      createFolder(nodeData.reference);
                   }
                },
                "create_file": {
-                  "label": tsg.locale.File,
+                  "label": ___ts_locale.File,
                   "action": function(nodeData) {
                      createFile(nodeData.reference);
                   }
                },
                "upload_file": {
-                  "label": tsg.locale.Upload,
+                  "label": ___ts_locale.Upload,
                   "action": function(nodeData) {
                      $("#file-upload").click();
                   }
@@ -243,14 +243,14 @@ function prepareTree() {
             if (this.get_type(node) === "file") {
                delete tmp.create;
             }
-            tmp.ccp.label = tsg.locale.Edit;
-            tmp.ccp.submenu.copy.label = tsg.locale.Copy;
-            tmp.ccp.submenu.cut.label = tsg.locale.Cut;
-            tmp.ccp.submenu.paste.label = tsg.locale.Paste;
+            tmp.ccp.label = ___ts_locale.Edit;
+            tmp.ccp.submenu.copy.label = ___ts_locale.Copy;
+            tmp.ccp.submenu.cut.label = ___ts_locale.Cut;
+            tmp.ccp.submenu.paste.label = ___ts_locale.Paste;
             if (tmp.create)
-               tmp.create.label = tsg.locale.Create;
-            tmp.rename.label = tsg.locale.Rename;
-            tmp.remove.label = tsg.locale.Remove;
+               tmp.create.label = ___ts_locale.Create;
+            tmp.rename.label = ___ts_locale.Rename;
+            tmp.remove.label = ___ts_locale.Remove;
             var previous_remove_action = tmp.remove.action;
             function remove_action(nodeData) {
                confirmAndRemove(nodeData, function(ajaxData, dialogItself) {
@@ -293,7 +293,7 @@ function prepareTree() {
       }
       $.get('?operation=rename_node', {'id': nodeData.node.id, 'text': nodeData.text}).done(function(content_data) {
          nodeData.instance.set_id(nodeData.node, content_data.id);
-         tsg.tree.selected_data = nodeData;
+         ___ts_editor.tree.selected_data = nodeData;
       }).fail(function() {
          nodeData.instance.refresh();
       });
@@ -311,7 +311,7 @@ function prepareTree() {
          nodeData.instance.refresh();
       });
    }).on('changed.jstree', function(e, nodeData) {
-      if (tsg.aceEditor.editing && tsg.aceEditor.changed) {
+      if (___ts_editor.aceEditor.editing && ___ts_editor.aceEditor.changed) {
          confirmAndSave(nodeData,
                  function() {
                     saveFile(
@@ -374,9 +374,13 @@ function submitForm(formId, inputOperation, inputValue) {
 
 function buttonsClick() {
    $("#btn-run").click(function(e) {
-      $("#userid").val(tsg.user.data.id);
-      $("#nickname").val(tsg.user.data.nickname);
-      $("#filename").val(tsg.tree.selected_data.node.id);
+      var id = ___ts_editor.user.data.id;
+      var nickname = ___ts_editor.user.data.nickname;
+      var filename = ___ts_editor.tree.selected_data.node.id;
+      $("#userid").val(id);
+      $("#nickname").val(nickname);
+      $("#filename").val(filename);
+      $("#run").val(___ts_crypt.base64_encode('nn=' + nickname + '&fn=' + filename));
       submitForm("form-run");
    });
 
@@ -384,9 +388,9 @@ function buttonsClick() {
       saveFile(
               function() {
                  $("#id-status-save").html("SAVED");
-                  tsg.aceEditor.changed = false;
-                  tsg.aceEditor.undo_manager.markClean();
-                  $("#id-status-save").html("OK");
+                 ___ts_editor.aceEditor.changed = false;
+                 ___ts_editor.aceEditor.undo_manager.markClean();
+                 $("#id-status-save").html("OK");
               },
               function() {
                  $("#id-status-save").html("ERROR");
@@ -449,13 +453,13 @@ function saveFile(sucessCallback, errorCallback) {
       method: "POST",
       dataType: "json",
       data: {
-         user: tsg.user.data.nickname,
-         fileid: tsg.tree.selected_data.node.id,
-         txt: tsg.aceEditor.editor.getValue()
+         user: ___ts_editor.user.data.nickname,
+         fileid: ___ts_editor.tree.selected_data.node.id,
+         txt: ___ts_editor.aceEditor.editor.getValue()
       },
       success: function(data) {
          if (sucessCallback) {
-            tsg.aceEditor.changed = false;
+            ___ts_editor.aceEditor.changed = false;
             sucessCallback(data);
          }
       },
@@ -475,7 +479,7 @@ $(function() {
 
    disableButtons();
 
-   prepareEditor(tsg.aceEditor);
+   prepareEditor(___ts_editor.aceEditor);
 
    buttonsClick();
 
@@ -483,8 +487,8 @@ $(function() {
 
    $('#file-upload').change(function(event) {
       var form = new FormData();
-      if (tsg.tree.selected_data)
-         form.append('folder', tsg.tree.selected_data.node.id);
+      if (___ts_editor.tree.selected_data)
+         form.append('folder', ___ts_editor.tree.selected_data.node.id);
       form.append('userfile', event.target.files[0]); // para apenas 1 arquivo
       upload(form);
    });
@@ -506,8 +510,8 @@ $(function() {
             if (result.error) {
                alert(result.msg);
             } else {
-               if (tsg.tree.selected_data)
-                  tsg.tree.selected_data.instance.refresh();
+               if (___ts_editor.tree.selected_data)
+                  ___ts_editor.tree.selected_data.instance.refresh();
             }
          },
          cache: false,
@@ -536,13 +540,13 @@ $(function() {
 function changeNode(nodeData) {
    disableButtons();
    if (nodeData && nodeData.selected && nodeData.selected.length) {
-      tsg.tree.selected_data = nodeData;
+      ___ts_editor.tree.selected_data = nodeData;
       $.get('?operation=get_content&id=' + nodeData.selected.join(':'), function(content_data) {
-         tsg.tree.selected_content_data = content_data;
-         tsg.aceEditor.editing = false;
-         tsg.aceEditor.changed = false;
+         ___ts_editor.tree.selected_content_data = content_data;
+         ___ts_editor.aceEditor.editing = false;
+         ___ts_editor.aceEditor.changed = false;
          $("#id-status-save").html("OK");
-         tsg.aceEditor.undo_manager.markClean();
+         ___ts_editor.aceEditor.undo_manager.markClean();
          enableButtons(content_data);
          $("#id-status-tree").html(nodeData.selected);
          if (content_data && typeof content_data.type !== 'undefined') {
@@ -560,9 +564,9 @@ function changeNode(nodeData) {
                case 'css':
                case 'html':
                   $('#data .code').show();
-                  tsg.aceEditor.editing = true;
-                  tsg.aceEditor.session.setValue(content_data.content);
-                  tsg.aceEditor.editor.setReadOnly(content_data.data.readonly);
+                  ___ts_editor.aceEditor.editing = true;
+                  ___ts_editor.aceEditor.session.setValue(content_data.content);
+                  ___ts_editor.aceEditor.editor.setReadOnly(content_data.data.readonly);
                   break;
                case 'png':
                case 'jpg':
