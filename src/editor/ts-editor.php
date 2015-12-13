@@ -97,23 +97,22 @@
                <?php
                if (isset($userid)) {
                   echo "
-                        <form id='form-signout' action='?auth' method='post' class='navbar-form navbar-right' role='form'>
-                        <input type='hidden' name='auth'></input>
-                        <div class='top-div-item'>$firstname</div>
-                        <input id='operation' type='hidden' name='operation'></input>
-                        <div class='top-div-item button button-primary button-tiny'>
-                        <a id='signout' href='#'>" . _("Sign Out") . "</a></div>
+                     <form id='form-signout' action='?auth' method='post' class='navbar-form navbar-right' role='form'>
+                     <input type='hidden' name='auth'></input>
+                     <input id='operation' type='hidden' name='operation'></input>" .
+                  formFieldBS(_("Name"), "text", "id-name", "name", $firstname, "glyphicon-user") . "                           
+                     <button id='signout' type='submit' class='btn btn-primary'>" . _("Sign Out") . "</button>
                      </form>";
                } else {
                   echo "
-                           <form id='form-signin' action='?' method='post' class='navbar-form navbar-right' role='form'>
-                           <input type='hidden' name='auth'></input>
-                           <input id='operation' type='hidden' name='operation'></input>" .
+                     <form id='form-signin' action='?' method='post' class='navbar-form navbar-right' role='form'>
+                     <input type='hidden' name='auth'></input>
+                     <input id='operation' type='hidden' name='operation'></input>" .
                   formFieldBS(_("Nickname or Email"), "text", "id-nickname-or-email", "nickname_or_email", "", "glyphicon-user") .
-                  formFieldBS(_("Password"), "password", "id-password", "password", "",  "glyphicon-lock") . "
-                           <button id='signin' type='submit' class='btn btn-primary'>" . _("Sign In") . "</button>
-                           <button  id='register' type='submit' class='btn btn-primary'>" . _("Register") . "</button>
-                           </form>";                     /*
+                  formFieldBS(_("Password"), "password", "id-password", "password", "", "glyphicon-lock") . "
+                     <button id='signin' type='submit' class='btn btn-primary'>" . _("Sign In") . "</button>
+                     <button  id='register' type='submit' class='btn btn-primary'>" . _("Register") . "</button>
+                     </form>";                     /*
                     echo "
                     <form id='form-signin' action='?' method='post' class='navbar-form navbar-right' role='form'>
                     <input 'hidden' name='auth'>
@@ -197,7 +196,7 @@
             <button id="btn-run" class="fl ml5 btn btn-primary"><span class="mr5 glyphicon glyphicon-play"></span><? echo _("Run"); ?></button>
             <button id="btn-save" class="fl ml5 btn btn-primary"><span class="mr5 glyphicon glyphicon-floppy-save"></span><? echo _("Save"); ?></button>
             <button id="btn-new-folder" class="fl ml5 btn btn-primary"><span class="mr5 glyphicon glyphicon-plus"></span><? echo _("New Folder"); ?></button>
-               <button id="btn-new-file" class="fl ml5 btn btn-primary"><span class="mr5 glyphicon glyphicon-plus"></span><? echo _("New File"); ?></button>
+            <button id="btn-new-file" class="fl ml5 btn btn-primary"><span class="mr5 glyphicon glyphicon-plus"></span><? echo _("New File"); ?></button>
             <button id="btn-rename" class="fl ml5 btn btn-primary"><span class="mr5 glyphicon glyphicon-edit"></span><? echo _("Rename"); ?></button>
             <button id="btn-remove" class="fl ml5 btn btn-primary"><span class="mr5 glyphicon glyphicon-remove"></span><? echo _("Delete"); ?></button>
             <button id="btn-upload" class="fl ml5 btn btn-primary"><span class="mr5 glyphicon glyphicon-floppy-open"></span><? echo _("Upload"); ?></button>

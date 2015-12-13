@@ -125,13 +125,13 @@ $(function() {
    password2 = $("#password2");
    prepareBlurEvents();
    $("#signin").click(function(e) {
-      var form = $("#form-signin");
+      var form = $("#id-form-signin");
       var input = $("#operation");
       input.val("signin");
       form.submit();
    });
    $("#register").click(function(e) {
-      var form = $("#form-signin");
+      var form = $("#id-form-register");
       var input = $("#operation");
       input.val("register");
       form.submit();
@@ -146,7 +146,7 @@ $(function() {
               testPassword(email, true) &&
               testRetypePassword(email, email2, false);
       if (ok) {
-         var form = $("#form-signin");
+         var form = $("#id-form-register");
          var input = $("#operation");
          input.val("save-register");
          form.submit();

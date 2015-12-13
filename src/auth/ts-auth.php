@@ -1,11 +1,12 @@
 <?php
+/* ---------------------------------------------------------------------------- */
+
 $operation = $_REQUEST["operation"];
 if (!isset($operation))
    $operation = 'none';
 
-if ($_SESSION["ID"] && ($operation !== 'signout')) {
+if ($_SESSION["ID"] && ($operation !== 'signout'))
    header("Location: ?");
-}
 
 $nickname_or_email = $_REQUEST["nickname_or_email"];
 $nickname = $_REQUEST["nickname"];
@@ -16,21 +17,22 @@ $email2 = $_REQUEST["email2"];
 $password = $_REQUEST["password"];
 $password2 = $_REQUEST["password2"];
 
-$form_register = null;
-$form_login = null;
+$form = null;
 $provider_user_id = null;
 
 switch ($operation) {
+
    case "signout":
+
       $_SESSION = array();
-      if (isset($_COOKIE[session_name()])) {
+      if (isset($_COOKIE[session_name()]))
          setcookie(session_name(), '', time() - 42000, '/');
-      }
       session_destroy();
-      // $_SESSION["ID"] = null;
       header("Location: ?");
       break;
+
    case "signin":
+
       if (isset($nickname_or_email) && isset($password)) {
          $link = linkDatabase() or die(_("Connection error!"));
          $qry = get_user_by_nickname_or_email($link, $nickname_or_email);
@@ -56,7 +58,9 @@ switch ($operation) {
          $form_login = formLogin();
       }
       break;
+
    case "social-signin":
+
       $provider = $_REQUEST["provider"];
       if (isset($provider)) {
          try {
@@ -84,38 +88,105 @@ switch ($operation) {
                $lastname = $user_profile->lastName;
                $provider_user_id = $user_profile->identifier;
                //create_new_hybridauth_user($link, $email, $firstname, $lastname, $provider, $provider_user_id);
-               $form_register = formRegister($provider, $nickname, $firstname, $lastname, $email, $provider_user_id);
+               $form = formRegisterBS($provider, $nickname, $firstname, $lastname, $email, $provider_user_id);
             }
          } else {
             $form_login = formLogin();
          }
       }
       break;
+
    case "register":
-      $form_register = formRegister($provider, $nickname, $firstname, $lastname, $email, $provider_user_id);
+
+      $form = formRegisterBS($provider, $nickname, $firstname, $lastname, $email, $provider_user_id);
       break;
+
    case "save-register":
-      $link = linkDatabase() or die("Connection error!");
-      $ok = create_new_user($link, $nickname, $firstname, $lastname, $email, $password);
+
+      $ok = !(empty($nickname) ||
+              empty($firstname) ||
+              empty($lastname) ||
+              empty($password) ||
+              empty($password2) ||
+              empty($email) ||
+              empty($email2));
+      if ($ok) {
+         $link = linkDatabase() or die("Connection error!");
+         $ok = create_new_user($link, $nickname, $firstname, $lastname, $email, $password);
+      }
       if (!$ok) {
-         $form_register = formRegister($provider, $nickname, $firstname, $lastname, $email, $provider_user_id);
+         $form = formRegisterBS($provider, $nickname, $firstname, $lastname, $email, $provider_user_id);
       } else {
-         header("Location: ?");
+         sendRegisterEmail($nickname, $firstname, $email);
+         $form = formConfirmEmail($nickname, $email);
+         // header("Location: ?");
       }
       break;
+
+   case "confirm":
+
+      $key = $_REQUEST["key"];
+      if (md5($nickname, $email) === $key) {
+         sendConfirmedEmail();
+         $form = formConfirmed();
+      }
+      break;
+
+   case "test-register-email":
+
+      sendRegisterEmail("betobyte", "Roberto", "betobyte@gmail.com");
+      die('test-register-email finished.');
+      break;
+
    default:
+
       $form_login = formLogin();
       break;
 }
 
-// initialize_i18n(substr($_SERVER["HTTP_ACCEPT_LANGUAGE"], 0, 5));
-
-function linkDatabase_() {
-   $link = mysql_connect("localhost", "user_name", "user_password");
-   mysql_select_db('db_name', $link);
-   return $link;
+/** ----------------------------------------------------------------------------
+ * @param type $nickname
+ * @param type $email
+ * @param type $key
+ * -----------------------------------------------------------------------------
+ */
+function sendRegisterEmail($nickname, $firstname, $email) {
+   $url = "www.threescript.com?auth&operation=confirm&email={EMAIL}&key={KEY}";
+   $key = md5($nickname . $email);
+   $template_php = true;
+   if ($template_php) {
+      $template_html = createRegisterTemplate($url, $key, 'html');
+      $template_txt = createRegisterTemplate($url, $key, 'txt');
+   } else {
+      $filedir = 'master/ThreeScriptTools/src/mail/templates';
+      $filename ='register_template';
+      $root = $_SERVER['DOCUMENT_ROOT'] . "/$filedir";
+      $template_html = file_get_contents("$root/$filename.html");
+      $template_txt = file_get_contents("$root/$filename.txt");
+   }
+   $info = array(
+       'nickname' => $nickname,
+       'firstname' => $firstname,
+       'email' => $email,
+       'key' => $key,
+       'html' => format_email($template_html),
+       'txt' => format_email($template_txt)
+   );
+   echo format_email($template_html);
+   echo format_email($template_txt);
+   die();
+   $res = send_email($info);
+   if ($res) {
+      echo "the email was sent to $email";
+   } else {
+      echo "the email wasn't sent to $email: '$res'";
+   }
 }
 
+/** ----------------------------------------------------------------------------
+ * @return string
+ * -----------------------------------------------------------------------------
+ */
 function formLogin() {
    $operation = "<input id='operation' type='hidden' name='operation' value=''>";
    $nickname = formField(_("Nickname or Email"), "text", "nickname_or_email", "nickname_or_email", "");
@@ -123,8 +194,8 @@ function formLogin() {
    $buttons = providersButtons();
 
    $str = "
-      <form id='form-signin' action='?' method='post'>
-         <div id='form-signin-div' class='pr'>
+      <form id='id-form-signin' action='?' method='post'>
+         <div id='id-div-form-signin-div' class='pr'>
             <div class='pr form-title'>" . _("Sign In") . "</div>
             $operation
             $nickname
@@ -139,6 +210,16 @@ function formLogin() {
    return $str;
 }
 
+/** ----------------------------------------------------------------------------
+ * @param type $provider
+ * @param type $nickname
+ * @param type $firstname
+ * @param type $lastname
+ * @param type $email
+ * @param type $provider_user_id
+ * @return string
+ * -----------------------------------------------------------------------------
+ */
 function formRegister($provider, $nickname, $firstname, $lastname, $email, $provider_user_id) {
    $operation = "<input id='operation' type='hidden' name='operation' value=''>";
    $nickname = formField(_("Nickname"), "text", "nickname", "nickname", "");
@@ -155,7 +236,7 @@ function formRegister($provider, $nickname, $firstname, $lastname, $email, $prov
    $buttons = providersButtons();
 
    $str = "
-      <form id='form-signin' action='?'>
+      <form id='id-form-register' action='?' method='post'>
          <div id='form-register-div' class='pr'>
             <div class='form-title'>" . _("Register") . "</div>
             $operation
@@ -176,13 +257,65 @@ function formRegister($provider, $nickname, $firstname, $lastname, $email, $prov
    return $str;
 }
 
-function mysql_query_exec($link, $sql) {
-   $result = mysql_query($sql, $link);
-   if (!$result)
-      die(printf(_("Error: %s\n"), mysql_error($link)));
-   return $result;
+/** ----------------------------------------------------------------------------
+ * @param type $provider
+ * @param type $nickname
+ * @param type $firstname
+ * @param type $lastname
+ * @param type $email
+ * @param type $provider_user_id
+ * @return string
+ * -----------------------------------------------------------------------------
+ */
+function formRegisterBS($provider, $nickname, $firstname, $lastname, $email, $provider_user_id) {
+   $auth = "<input type='hidden' name='auth'>";
+   $operation = "<input id='operation' type='hidden' name='operation' value=''>";
+   $nickname = formRowFieldBS(_("Nickname"), "text", "nickname", "nickname", "", "form-group", "glyphicon-user", _("Type your nickname."), _("Use at least four alphanumeric characters, without spaces and the first alfa."));
+   $firstname = formRowFieldBS(_("First Name"), "text", "firstname", "firstname", $firstname, "col-sm-6 form-group", null, _("Type your first name."), _("Use at least two alphabetic characters."));
+   $lastname = formRowFieldBS(_("Last Name"), "text", "lastname", "lastname", $lastname, "col-sm-6 form-group", null, _("Type your last name"), _("Use at least two alphabetic characters."));
+   $email = formRowFieldBS(_("Email"), "text", "email", "email", $email, "col-sm-6 form-group", "glyphicon-envelope", _("Type your email."), _("Valid email."));
+   if ($provider)
+      $email2 = "";
+   else
+      $email2 = formRowFieldBS(_("Retype Email"), "text", "email2", "email2", "", "col-sm-6 form-group", null, _("Retype your email."), _("Retype the valid email."));
+   $password = formRowFieldBS(_("Password"), "password", "password", "password", "", "col-sm-6 form-group", "glyphicon-lock", _("Type your password"), _("Use at least one uppercase letter, one lowercase letter, one number and one non-alphanumeric character."));
+   $password2 = formRowFieldBS(_("Retype Password"), "password", "password2", "password2", "", "col-sm-6 form-group", null, _("Retype your password."), _("Retype the password the same as the previous one."));
+
+   $buttons = providersButtons();
+
+   $str = "
+      <h1 class='well' style='position: absolute; margin-top: 0px;'>" . _("Register") . "</h1>
+      <div class='col-lg-12 well' style='position: absolute; top: 100px;'>
+         <form id='id-form-register' action='?' method='post' role='form'>
+            <div class='col-sm-12'>
+               $auth
+               $operation
+               $nickname
+               <div class='row'>
+                  $firstname
+                  $lastname
+               </div>
+               <div class='row'>
+                  $email
+                  $email2
+               </div>
+               <div class='row'>
+                  $password
+                  $password2
+               </div>
+               <a id='save-register' href='#' class='btn btn-primary'>" . _("Save Register") . "</a>
+               <a id='signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
+               $buttons
+            </div >
+         </form>
+      </div >";
+   return $str;
 }
 
+/** ----------------------------------------------------------------------------
+ * @return string
+ * -----------------------------------------------------------------------------
+ */
 function providersButtons() {
    $disable_buttons = true;
    if ($disable_buttons)
@@ -194,6 +327,12 @@ function providersButtons() {
    return $str;
 }
 
+/** ----------------------------------------------------------------------------
+ * @param type $name
+ * @param type $title
+ * @return type
+ * -----------------------------------------------------------------------------
+ */
 function providerButton($name, $title) {
    $str = "
       <div class='pr fl social-button'>
@@ -203,6 +342,8 @@ function providerButton($name, $title) {
       </div>";
    return $str;
 }
+
+/* -------------------------------------------------------------------------- */
 ?>
 
 <html>
@@ -211,96 +352,39 @@ function providerButton($name, $title) {
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
       <meta name="viewport" content="width=device-width" />
-      <script src="/oslib/js/jquery/jquery-1.11.3.js"></script>
-      <link href="/oslib/js/unicorn-ui.com/css/font-awesome.min.css" rel="stylesheet" />
+      <link href="/oslib/js/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+      <!--link href="/oslib/js/unicorn-ui.com/css/font-awesome.min.css" rel="stylesheet" />
       <link href="/oslib/js/unicorn-ui.com/css/buttons.css" rel="stylesheet" />
-      <script src="/oslib/js/unicorn-ui.com/js/buttons.js"></script>
-      <?= "<script src='$threescriptEditorSrcDir/auth/ts-auth.js'></script>" ?>
+      <script src="/oslib/js/unicorn-ui.com/js/buttons.js"></script-->
       <?= "<link href='$threescriptEditorSrcDir/auth/ts-auth.css'  rel='stylesheet'/>" ?>
    </head>
    <body>
-      <div id="signin-or-register" class="pr">
-         <div id="logo" class="pr">
-            <div id="logo-ts" class="pr">
-               <div class='t' style='font-size: 46px;'>t</div><div class='s'>s</div>
+      <div id="id-nav" class="navbar navbar-inverse navbar-fixed-top">
+         <div class="container">
+            <div id='id-logo' class='top-div-item_vaimorre navbar-header'>
+               <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+               </button>               
+               <!--a id="HTFont" class="navbar-brand" href="#">ThreeScript</a-->
+               <img id='img-logo' src='/img/ts/logo/logo.01a.127x33.png'>
             </div>
-            <div id="logo-threescript" class="pr">
-               <div class='t'>three</div><div class='s'>script</div>
-            </div>
-         </div>
-         <div id="form-signin-or-register" class="pr">
-            <?
-            if ($form_login) {
-               echo $form_login;
-            } elseif ($form_register) {
-               echo $form_register;
-            }
-            ?>
          </div>
       </div>
+      <section class="block">
+         <div class="container">
+            <div id="id-signin-or-register" class="panel-body" role="main">
+               <?
+               if ($form) {
+                  echo $form;
+               }
+               ?>
+            </div>
+         </div>
+      </section>
+      <script src="/oslib/js/jquery/jquery-1.11.3.js"></script>
+      <script src="/oslib/js/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+      <?= "<script src='$threescriptEditorSrcDir/auth/ts-auth.js'></script>" ?>
    </body>
 </html>
-
-
-<!--form class="form-horizontal">
-   <fieldset>
-
-      <!-- Form Name -- >
-      <legend>Form Name</legend>
-
-      <!-- Text input-- >
-      <div class="form-group">
-         <label class="col-md-4 control-label" for="id-nickname">Nickname.</label>  
-         <div class="col-md-4">
-            <input id="id-nickname" name="id-nickname" type="text" placeholder="Type your nickname." class="form-control input-md" required="">
-            <span class="help-block">Use only lower letters and number, at least four.</span>  
-         </div>
-      </div>
-
-      <!-- Text input-- >
-      <div class="form-group">
-         <label class="col-md-4 control-label" for="id-first-name">First Name</label>  
-         <div class="col-md-4">
-            <input id="id-first-name" name="id-first-name" type="text" placeholder="Type your first name here." class="form-control input-md" required="">
-            <span class="help-block">Use at least 3 alfa chars.</span>  
-         </div>
-      </div>
-
-      <!-- Text input-- >
-      <div class="form-group">
-         <label class="col-md-4 control-label" for="id-lastname">Last Name</label>  
-         <div class="col-md-4">
-            <input id="id-lastname" name="id-lastname" type="text" placeholder="Type your last name here." class="form-control input-md" required="">
-            <span class="help-block">Use at least 3 alfa chars.</span>  
-         </div>
-      </div>
-
-      <!-- Text input-- >
-      <div class="form-group">
-         <label class="col-md-4 control-label" for="email">Email</label>  
-         <div class="col-md-4">
-            <input id="email" name="email" type="text" placeholder="Type your email." class="form-control input-md" required="">
-            <span class="help-block">Type your email to confirm the register.</span>  
-         </div>
-      </div>
-
-      <!-- Text input-- >
-      <div class="form-group">
-         <label class="col-md-4 control-label" for="id-repeat-email">Repeat Email</label>  
-         <div class="col-md-4">
-            <input id="id-repeat-email" name="id-repeat-email" type="text" placeholder="Retype your email here." class="form-control input-md" required="">
-            <span class="help-block">Type the email again equal previous.</span>  
-         </div>
-      </div>
-
-      <!-- Password input-- >
-      <div class="form-group">
-         <label class="col-md-4 control-label" for="id-password">Password</label>
-         <div class="col-md-4">
-            <input id="id-password" name="id-password" type="password" placeholder="Type your password here." class="form-control input-md" required="">
-            <span class="help-block">Use lower and upper letters, numbers and non-alfanum chars.</span>
-         </div>
-      </div>
-
-   </fieldset>
-</form-->

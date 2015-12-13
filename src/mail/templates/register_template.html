@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <title>{TITLE}</title>
+      <style>
+         .email, .link, .obs {
+            font-family: "Verdana, Geneva, sans-serif";
+         }
+         .email {
+            color: #666666;
+            font-size: 12px;
+         }
+         .link {
+            color: #03110A;
+            font-size: 12px;
+         }
+         .obs {
+            color: #03110A;
+            font-size: 10px;
+         }
+      </style>
+   </head>
+   <body bgcolor="#C8DAC2">
+      <center>
+         <div class="email">
+            <center>
+               <div>
+                  <p>
+                     {Welcome} {USERNAME} {to} ThreeScript!
+                  </p>
+                  <p>
+                     {Thank-you for creating an account.}
+                  </p>
+                  <p>
+                     {Please confirm your account by clicking the link below!}
+                  </p>
+                  <center>
+                     <p>
+                        <a href="{SITEPATH}/auth?operation=confirmation&email={EMAIL}&key={KEY}" class="link">
+                           {KEY}
+                        </a>
+                     </p>
+                  </center>
+                  <p>
+                     {If the above link is not working, please copy and paste this address}}
+                     ({SITEPATH}/auth?operation=confirm&email={EMAIL}&key={KEY}) 
+                     {into your browsers address bar.}
+                  </p>
+               </div>
+            </center>
+         </div>
+         <div>
+            <center>
+               <div class="obs">
+                  <p>
+                     {You received this e-mail because you are currently a member of ThreeScript.}
+                     {If you think you should not have received this e-mail, please contact}
+                     <a href="" class="link">
+                        master@threescript.com
+                     </a>
+                  </p>
+               </div>
+            </center>
+         </div>
+      </center>
+   </body>
+</html>

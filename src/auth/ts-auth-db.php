@@ -1,5 +1,18 @@
 <?php
 
+function mysql_query_exec($link, $sql) {
+   $result = mysql_query($sql, $link);
+   if (!$result)
+      die(printf(_("Error: %s\n"), mysql_error($link)));
+   return $result;
+}
+
+function linkDatabase_() {
+   $link = mysql_connect("localhost", "user_name", "user_password");
+   mysql_select_db('db_name', $link);
+   return $link;
+}
+
 function get_user_by_email($link, $email) {
    return mysql_query_exec($link, "SELECT * FROM users WHERE email = '$email'");
 }
