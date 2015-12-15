@@ -15,7 +15,7 @@ function validateEmail(email) {
 function validateNickname(nickname, minLength) {
    if (nickname.length < minLength)
       return false;
-   var re = /^[a-z]\w*/i;
+   var re = /^[a-zA-Z0-9]+$/;
    var ok = re.test(nickname);
    return ok;
 }
@@ -23,7 +23,7 @@ function validateNickname(nickname, minLength) {
 function validateName(name, minLength) {
    if (name.length < minLength)
       return false;
-   var re = /^[a-zA-Z]\w*/i;
+   var re = /^[a-zA-Z\u00C0-\u017F][a-zA-Z\u00C0-\u017F\s]+$/i;
    var ok = re.test(name);
    return ok;
 }
@@ -57,7 +57,7 @@ function testName(name, acceptEmpty) {
    var val = name.val().trim();
    if (acceptEmpty && (val === ''))
       return true;
-   var ok = validateName(val, 3);
+   var ok = validateName(val, 2);
    return test(ok, name, 'Invalid name!');
 }
 
@@ -125,13 +125,13 @@ $(function() {
    password2 = $("#password2");
    prepareBlurEvents();
    $("#signin").click(function(e) {
-      var form = $("#id-form-signin");
+      var form = $("#id-form-auth");
       var input = $("#operation");
       input.val("signin");
       form.submit();
    });
    $("#register").click(function(e) {
-      var form = $("#id-form-register");
+      var form = $("#id-form-auth");
       var input = $("#operation");
       input.val("register");
       form.submit();
@@ -146,10 +146,22 @@ $(function() {
               testPassword(email, true) &&
               testRetypePassword(email, email2, false);
       if (ok) {
-         var form = $("#id-form-register");
+         var form = $("#id-form-auth");
          var input = $("#operation");
          input.val("save-register");
          form.submit();
       }
+   });
+   $("#send-again").click(function(e) {
+      var form = $("#id-form-auth");
+      var input = $("#operation");
+      input.val("send-again");
+      form.submit();
+   });
+   $("#confirm").click(function(e) {
+      var form = $("#id-form-auth");
+      var input = $("#operation");
+      input.val("confirm");
+      form.submit();
    });
 });

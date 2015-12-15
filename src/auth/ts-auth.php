@@ -37,25 +37,36 @@ switch ($operation) {
          $link = linkDatabase() or die(_("Connection error!"));
          $qry = get_user_by_nickname_or_email($link, $nickname_or_email);
          $user = mysql_fetch_assoc($qry);
-         $password_crypt = cryptPassword($user["nickname"], $password);
-         $ok = ($password_crypt === $user["password"]);
-         if ($ok) {
-            $_SESSION["ID"] = $user["id"];
-            $_SESSION["NICKNAME"] = $user["nickname"];
-            $_SESSION["FIRSTNAME"] = $user["firstname"];
-            $_SESSION["LASTNAME"] = $user["lastname"];
-            $_SESSION["EMAIL"] = $user["email"];
-            $dir = "users/" . $_SESSION["NICKNAME"];
-            if (!is_dir($dir)) {
-               $ok = mkdir($dir);
+         if ($user) {
+            $nickname_bd = $user["nickname"];
+            $email_bd = $user["email"];
+            $password_crypt = cryptPassword($nickname_bd, $password);
+            $ok = ($password_crypt === $user["password"]);
+            if ($ok) {
+               $confirmkey = $user["confirmkey"];
+               $confirmdate = $user["confirmdate"];
+               $confirmed = $confirmdate && ($confirmkey === md5($nickname_bd . $email_bd));
+               if ($confirmed) {
+                  $_SESSION["ID"] = $user["id"];
+                  $_SESSION["NICKNAME"] = $user["nickname"];
+                  $_SESSION["FIRSTNAME"] = $user["firstname"];
+                  $_SESSION["LASTNAME"] = $user["lastname"];
+                  $_SESSION["EMAIL"] = $user["email"];
+                  $dir = "users/" . $_SESSION["NICKNAME"];
+                  if (!is_dir($dir)) {
+                     $ok = mkdir($dir);
+                  }
+                  header("Location: ?");
+               } else {
+                  $form = formNotConfirmedBS($nickname_bd, $email_bd);
+               }
             }
-            header("Location: ?");
          } else {
             $error_msg = _("Wrong nickname, email or password.");
-            $form_login = formLogin();
+            $form = formSigninBS();
          }
       } else {
-         $form_login = formLogin();
+         $form = formSigninBS();
       }
       break;
 
@@ -72,7 +83,7 @@ switch ($operation) {
             $user_profile = $adapter->getUserProfile();
          } catch (Exception $e) {
             $error_msg = $e->getMessage();
-            $form_login = formLogin();
+            $form = formSigninBS();
          }
          if (isset($user_profile)) {
             $link = linkDatabase() or die("Connection error!");
@@ -91,7 +102,7 @@ switch ($operation) {
                $form = formRegisterBS($provider, $nickname, $firstname, $lastname, $email, $provider_user_id);
             }
          } else {
-            $form_login = formLogin();
+            $form = formSigninBS();
          }
       }
       break;
@@ -118,18 +129,45 @@ switch ($operation) {
          $form = formRegisterBS($provider, $nickname, $firstname, $lastname, $email, $provider_user_id);
       } else {
          sendRegisterEmail($nickname, $firstname, $email);
-         $form = formConfirmEmail($nickname, $email);
-         // header("Location: ?");
+         $form = formConfirmBS($nickname, $email);
       }
       break;
 
    case "confirm":
 
       $key = $_REQUEST["key"];
-      if (md5($nickname, $email) === $key) {
-         sendConfirmedEmail();
-         $form = formConfirmed();
+
+      if (!(empty($email) || empty($key))) {
+         $link = linkDatabase() or die(_("Connection error!"));
+         $qry = get_user_by_email($link, $email);
+         $user = mysql_fetch_assoc($qry);
+         $nickname_db = $user["nickname"];
+         $firstname_db = $user["firstname"];
+         $email_db = $user["email"];
+         $key_md5 = md5($nickname_db . $email_db);
+         $confirm_key = $user["confirmkey"];
+         $confirm_date = $user["confirmdate"];
+         if (($key_md5 === $confirm_key) && ($confirm_date)) {
+            $form = formSigninBS();
+         } else {
+            if ($key_md5 === $key) {
+               $updated = update_confirmed_user($link, $nickname_db, $email_db, $key_md5);
+               if ($updated) {
+                  sendConfirmedEmail($nickname_db, $firstname_db, $email_db);
+                  $form = formConfirmedBS();
+               } else {
+                  $form = "Occured a database error, please contact 'master@threescript.com'";
+               }
+            } else {
+               $form = "Wrong data. Please enter in contact with 'master@threescript.com'.";
+            }
+         }
       }
+      break;
+
+   case "send-again":
+      sendRegisterEmail($nickname, $firstname, $email);
+      $form = formConfirmBS();
       break;
 
    case "test-register-email":
@@ -140,7 +178,7 @@ switch ($operation) {
 
    default:
 
-      $form_login = formLogin();
+      $form = formSigninBS();
       break;
 }
 
@@ -151,7 +189,7 @@ switch ($operation) {
  * -----------------------------------------------------------------------------
  */
 function sendRegisterEmail($nickname, $firstname, $email) {
-   $url = "www.threescript.com?auth&operation=confirm&email={EMAIL}&key={KEY}";
+   $url = "{SITEPATH}?auth&operation=confirm&email={EMAIL}&key={KEY}";
    $key = md5($nickname . $email);
    $template_php = true;
    if ($template_php) {
@@ -159,7 +197,7 @@ function sendRegisterEmail($nickname, $firstname, $email) {
       $template_txt = createRegisterTemplate($url, $key, 'txt');
    } else {
       $filedir = 'master/ThreeScriptTools/src/mail/templates';
-      $filename ='register_template';
+      $filename = 'register_template';
       $root = $_SERVER['DOCUMENT_ROOT'] . "/$filedir";
       $template_html = file_get_contents("$root/$filename.html");
       $template_txt = file_get_contents("$root/$filename.txt");
@@ -169,12 +207,41 @@ function sendRegisterEmail($nickname, $firstname, $email) {
        'firstname' => $firstname,
        'email' => $email,
        'key' => $key,
-       'html' => format_email($template_html),
-       'txt' => format_email($template_txt)
+       'html' => $template_html,
+       'txt' => $template_txt
    );
-   echo format_email($template_html);
-   echo format_email($template_txt);
-   die();
+   $info["html"] = format_email($template_html, $info, "html");
+   $info["txt"] = format_email($template_txt, $info, "txt");
+   return send_email($info);
+}
+
+/** ----------------------------------------------------------------------------
+ * @param type $nickname
+ * @param type $email
+ * @param type $key
+ * -----------------------------------------------------------------------------
+ */
+function sendConfirmedEmail($nickname, $firstname, $email) {
+   $template_php = true;
+   if ($template_php) {
+      $template_html = createConfirmTemplate('html');
+      $template_txt = createConfirmTemplate('txt');
+   } else {
+      $filedir = 'master/ThreeScriptTools/src/mail/templates';
+      $filename = 'register_template';
+      $root = $_SERVER['DOCUMENT_ROOT'] . "/$filedir";
+      $template_html = file_get_contents("$root/$filename.html");
+      $template_txt = file_get_contents("$root/$filename.txt");
+   }
+   $info = array(
+       'nickname' => $nickname,
+       'firstname' => $firstname,
+       'email' => $email,
+       'html' => $template_html,
+       'txt' => $template_txt
+   );
+   $info["html"] = format_email($template_html, $info, "html");
+   $info["txt"] = format_email($template_txt, $info, "txt");
    $res = send_email($info);
    if ($res) {
       echo "the email was sent to $email";
@@ -187,14 +254,14 @@ function sendRegisterEmail($nickname, $firstname, $email) {
  * @return string
  * -----------------------------------------------------------------------------
  */
-function formLogin() {
+function formSignin() {
    $operation = "<input id='operation' type='hidden' name='operation' value=''>";
    $nickname = formField(_("Nickname or Email"), "text", "nickname_or_email", "nickname_or_email", "");
    $password = formField(_("Password"), "password", "password", "password", "");
    $buttons = providersButtons();
 
    $str = "
-      <form id='id-form-signin' action='?' method='post'>
+      <form id='id-form-auth' action='?' method='post'>
          <div id='id-div-form-signin-div' class='pr'>
             <div class='pr form-title'>" . _("Sign In") . "</div>
             $operation
@@ -207,6 +274,42 @@ function formLogin() {
             </div>
          </div>
       </form>";
+   return $str;
+}
+
+/** ----------------------------------------------------------------------------
+ * @param type $provider
+ * @param type $nickname
+ * @param type $firstname
+ * @param type $lastname
+ * @param type $email
+ * @param type $provider_user_id
+ * @return string
+ * -----------------------------------------------------------------------------
+ */
+function formSigninBS() {
+   $auth = "<input type='hidden' name='auth'>";
+   $operation = "<input id='operation' type='hidden' name='operation' value=''>";
+   $nickname = formRowFieldBS(_("Nickname or email"), "text", "nickname_or_email", "nickname_or_email", "", "form-group", "glyphicon-user", _("Type your nickname."), _("Use at least four alphanumeric characters, without spaces and the first alfa."));
+   $password = formRowFieldBS(_("Password"), "password", "password", "password", "", "form-group", "glyphicon-lock", _("Type your nickname."), _("Use at least four alphanumeric characters, without spaces and the first alfa."));
+
+   $buttons = providersButtons();
+
+   $str = "
+      <h1 class='well' style='position: absolute; margin-top: 0px;'>" . _("Sign In") . "</h1>
+      <div class='col-lg-12 well' style='position: absolute; top: 100px;'>
+         <form id='id-form-auth' action='?' method='post' role='form'>
+            <div class='col-sm-12'>
+               $auth
+               $operation
+               $nickname
+               $password
+               <a id='signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
+               <a id='register' href='#' class='btn btn-primary'>" . _("Register") . "</a>
+               $buttons
+            </div >
+         </form>
+      </div >";
    return $str;
 }
 
@@ -236,7 +339,7 @@ function formRegister($provider, $nickname, $firstname, $lastname, $email, $prov
    $buttons = providersButtons();
 
    $str = "
-      <form id='id-form-register' action='?' method='post'>
+      <form id='id-form-auth' action='?' method='post'>
          <div id='form-register-div' class='pr'>
             <div class='form-title'>" . _("Register") . "</div>
             $operation
@@ -286,7 +389,7 @@ function formRegisterBS($provider, $nickname, $firstname, $lastname, $email, $pr
    $str = "
       <h1 class='well' style='position: absolute; margin-top: 0px;'>" . _("Register") . "</h1>
       <div class='col-lg-12 well' style='position: absolute; top: 100px;'>
-         <form id='id-form-register' action='?' method='post' role='form'>
+         <form id='id-form-auth' action='?' method='post' role='form'>
             <div class='col-sm-12'>
                $auth
                $operation
@@ -304,6 +407,110 @@ function formRegisterBS($provider, $nickname, $firstname, $lastname, $email, $pr
                   $password2
                </div>
                <a id='save-register' href='#' class='btn btn-primary'>" . _("Save Register") . "</a>
+               <a id='signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
+               $buttons
+            </div >
+         </form>
+      </div >";
+   return $str;
+}
+
+/** ----------------------------------------------------------------------------
+ * @param type $provider
+ * @param type $nickname
+ * @param type $firstname
+ * @param type $lastname
+ * @param type $email
+ * @param type $provider_user_id
+ * @return string
+ * -----------------------------------------------------------------------------
+ */
+function formConfirmBS() {
+   $auth = "<input type='hidden' name='auth'>";
+   $operation = "<input id='operation' type='hidden' name='operation' value=''>";
+   $confirm_key = formRowFieldBS(_("Confirm key"), "text", "confirm_key", "confirm_key", "", "form-group", "glyphicon-user", _("Type your nickname."), _("Use at least four alphanumeric characters, without spaces and the first alfa."));
+
+   $buttons = providersButtons();
+
+   $str = "
+      <h1 class='well' style='position: absolute; margin-top: 0px;'>" . _("Confirm") . "</h1>
+      <div class='col-lg-12 well' style='position: absolute; top: 100px;'>
+         <form id='id-form-auth' action='?' method='post' role='form'>
+            <div class='col-sm-12'>
+               $auth
+               $operation
+               $confirm_key
+               <a id='signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
+               <a id='confirm' href='#' class='btn btn-primary'>" . _("Confirm") . "</a>
+               $buttons
+            </div >
+         </form>
+      </div >";
+   return $str;
+}
+
+/** ----------------------------------------------------------------------------
+ * @param type $provider
+ * @param type $nickname
+ * @param type $firstname
+ * @param type $lastname
+ * @param type $email
+ * @param type $provider_user_id
+ * @return string
+ * -----------------------------------------------------------------------------
+ */
+function formConfirmedBS() {
+   $auth = "<input type='hidden' name='auth'>";
+   $operation = "<input id='operation' type='hidden' name='operation' value=''>";
+
+   $buttons = providersButtons();
+
+   $str = "
+      <h1 class='well' style='position: absolute; margin-top: 0px;'>" . _("Confirmed") . "</h1>
+      <div class='col-lg-12 well' style='position: absolute; top: 100px;'>
+         <form id='id-form-auth' action='?' method='post' role='form'>
+            <div class='col-sm-12'>
+               $auth
+               $operation
+               <a id='signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
+               $buttons
+            </div >
+         </form>
+      </div >";
+   return $str;
+}
+
+/** ----------------------------------------------------------------------------
+ * @param type $provider
+ * @param type $nickname
+ * @param type $firstname
+ * @param type $lastname
+ * @param type $email
+ * @param type $provider_user_id
+ * @return string
+ * -----------------------------------------------------------------------------
+ */
+function formNotConfirmedBS($nickname, $email) {
+   $auth = "<input type='hidden' name='auth'>";
+   $operation = "<input id='operation' type='hidden' name='operation' value=''>";
+   $nickname_hidden = "<input id='nickname' type='hidden' name='nickname' value='$nickname'>";
+   $email_hidden = "<input id='email' type='hidden' name='email' value='$email'>";
+   $confirm_key = formRowFieldBS(_("Confirm key"), "text", "confirm_key", "confirm_key", "", "form-group", "glyphicon-user", _("Type your nickname."), _("Use at least four alphanumeric characters, without spaces and the first alfa."));
+
+   $buttons = providersButtons();
+
+   $str = "
+      <h1 class='well' style='position: absolute; margin-top: 0px;'>" . _("Not Confirmed") . "</h1>
+      <div class='col-lg-12 well' style='position: absolute; top: 100px;'>
+         <form id='id-form-auth' action='?' method='post' role='form'>
+            <div class='col-sm-12'>
+               $auth
+               $operation
+               $nickname_hidden
+               $email_hidden
+               $confirm_key
+               <a id='send-again' href='#' class='btn btn-primary'>" . _("Send again") . "</a>
+               <a id='confirm' href='#' class='btn btn-primary'>" . _("Confirm") . "</a>
                <a id='signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
                $buttons
             </div >

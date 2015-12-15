@@ -1,16 +1,16 @@
 <?php
 
+function linkDatabase_() {
+   $link = mysql_connect("localhost", "user_name", "user_password");
+   mysql_select_db('db_name', $link);
+   return $link;
+}
+
 function mysql_query_exec($link, $sql) {
    $result = mysql_query($sql, $link);
    if (!$result)
       die(printf(_("Error: %s\n"), mysql_error($link)));
    return $result;
-}
-
-function linkDatabase_() {
-   $link = mysql_connect("localhost", "user_name", "user_password");
-   mysql_select_db('db_name', $link);
-   return $link;
 }
 
 function get_user_by_email($link, $email) {
@@ -19,17 +19,17 @@ function get_user_by_email($link, $email) {
 
 function get_user_by_nickname_or_email($link, $nickname_or_email) {
    return mysql_query_exec($link, "
-      SELECT id, nickname, firstname, lastname, email, password
+      SELECT id, nickname, firstname, lastname, email, password, confirmkey, confirmdate
       FROM users
       WHERE ((nickname = '$nickname_or_email') OR (email = '$nickname_or_email'))");
 }
 
-function get_user_by_email_and_password($link, $nickname, $email, $password) {
+function get_user_by_email_and_password($link, $mail, $password) {
    // $password_crypt = cryptPassword($nickname, $password);
    return mysql_query_exec($link, "
-      SELECT id, nickname, firstname
+      SELECT id, nickname, firstname, lastname, email
       FROM users 
-      WHERE (email = '$email') AND (password = '$password_crypt')");
+      WHERE (email = '$email') AND (password = '$password')");
 }
 
 function get_user_by_provider_and_id($link, $provider, $provider_user_id) {
@@ -83,10 +83,18 @@ function create_new_user($link, $nickname, $firstname, $lastname, $email, $passw
          '$lastname',
          '$email',
          '$password_crypt',
-         NOW())"
-   );
+         NOW())");
    if ($ok && !is_dir("users/$nickname"))
       $ok = mkdir("users/$nickname");
+   return $ok;
+}
+
+function update_confirmed_user($link, $nickname, $email, $key) {
+   $ok = mysql_query_exec($link, "
+      UPDATE users set
+         confirmkey = '$key',
+         confirmdate = NOW()
+      WHERE (nickname = '$nickname') AND (email = '$email')");
    return $ok;
 }
 
