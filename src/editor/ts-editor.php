@@ -112,21 +112,7 @@
                   formFieldBS(_("Password"), "password", "id-password", "password", "", "glyphicon-lock") . "
                      <button id='signin' type='submit' class='btn btn-primary'>" . _("Sign In") . "</button>
                      <button  id='register' type='submit' class='btn btn-primary'>" . _("Register") . "</button>
-                     </form>";                     /*
-                    echo "
-                    <form id='form-signin' action='?' method='post' class='navbar-form navbar-right' role='form'>
-                    <input 'hidden' name='auth'>
-                    <input id='operation' type='hidden' name='operation'></input>
-                    <div class='top-div-item'>" . _("Nickname or Email") . "</div>
-                    <div class='top-div-item'><input type='text' name='nickname_or_email'></input></div>
-                    <div class='top-div-item'>" . _("Password") . "</div>
-                    <div class='top-div-item'><input type='password' name='password'></input></div>
-                    <div class='top-div-item button button-primary button-tiny'>
-                    <a id='signin' href='#'>" . _("Sign In") . "</a></div>
-                    <div class='top-div-item button button-primary button-tiny'>
-                    <a id='register' href='#'>" . _("Register") . "</a></div>
-                    </form>";
-                   */
+                     </form>";
                }
                ?>
             </div>

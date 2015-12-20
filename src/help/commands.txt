@@ -1,0 +1,6 @@
+TS.percam
+   perspective camera :: creates a perspective camera with fov, aspect, near, far
+   p fov :: field of view :: field of perspective view
+   p aspect :: aspect :: aspect with the relation between horizontal and vertical widths.
+   p near :: near rendering :: min distance to render objects in the scene.
+   p far :: far rendering :: max distance to render objects in the scene.
