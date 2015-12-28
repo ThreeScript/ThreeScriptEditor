@@ -5,8 +5,8 @@ $operation = $_REQUEST["operation"];
 if (!isset($operation))
    $operation = 'none';
 
-if ($_SESSION["ID"] && ($operation !== 'signout'))
-   header("Location: ?");
+if ($_SESSION["ID"] && !(($operation === 'signout') || ($operation === 'change-password')))
+   header("Location: ?edit");
 
 $nickname_or_email = $_REQUEST["nickname_or_email"];
 $nickname = $_REQUEST["nickname"];
@@ -28,7 +28,7 @@ switch ($operation) {
       if (isset($_COOKIE[session_name()]))
          setcookie(session_name(), '', time() - 42000, '/');
       session_destroy();
-      header("Location: ?");
+      header("Location: ?edit");
       break;
 
    case "signin":
@@ -56,7 +56,7 @@ switch ($operation) {
                   if (!is_dir($dir)) {
                      $ok = mkdir($dir);
                   }
-                  header("Location: ?");
+                  header("Location: ?edit");
                } else {
                   $form = formNotConfirmedBS($nickname_bd, $email_bd);
                }
@@ -93,7 +93,7 @@ switch ($operation) {
                $_SESSION["ID"] = $user["id"];
                $_SESSION["NICKNAME"] = $user["nickname"];
                $_SESSION["FIRSTNAME"] = $user["firstname"];
-               header("Location: ?");
+               header("Location: ?edit");
             } else {
                $firstname = $user_profile->firstName;
                $lastname = $user_profile->lastName;
@@ -133,7 +133,80 @@ switch ($operation) {
       }
       break;
 
-   case "confirm":
+   case "change-password":
+
+      if ($_SESSION["ID"]) {
+         $form = formChangePasswordBS(false);
+      } else {
+         $form = formSendEmailChangePasswordBS();
+      }
+      break;
+
+   case "send-email-change-password":
+      sendChangePasswordEmail($nickname, $firstname, $email);
+      $form = formChangePasswordChangedBS();
+      break;
+
+   case "confirm-change-password-with-old-password":
+
+      $link = linkDatabase() or die(_("Connection error!"));
+      $qry = get_user_by_email($link, $email);
+      $user = mysql_fetch_assoc($qry);
+      $nickname_db = $user["nickname"];
+      $firstname_db = $user["firstname"];
+      $email_db = $user["email"];
+      $password_db = $user["password"];
+      $password_crypt = cryptPassword($nickname_db, $password);
+      $password_new = $_REQUEST["password1"];
+      $password_new2 = $_REQUEST["password2"];
+      $error = false;
+      if ($password_crypt !== $password_db) {
+         $error = true;
+         $error_msg = _("Wrong password");
+      } else if ($password_new !== $password_new2) {
+         $error = true;
+         $error_msg = _("Different new password and retype");
+         if ($error) {
+            $form = formPasswordChangeErrorBS($error_msg);            
+         }
+      } else {
+         $form = formPasswordChangedBS();
+      }
+      break;
+
+   case "email-change-password":
+
+      $key = $_REQUEST["key"];
+
+      if (!(empty($email) || empty($key))) {
+         $link = linkDatabase() or die(_("Connection error!"));
+         $qry = get_user_by_email($link, $email);
+         $user = mysql_fetch_assoc($qry);
+         $nickname_db = $user["nickname"];
+         $firstname_db = $user["firstname"];
+         $email_db = $user["email"];
+         $key_md5 = md5($nickname_db . $email_db);
+         $confirm_key = $user["confirmkey"];
+         $confirm_date = $user["confirmdate"];
+         if (($key_md5 === $confirm_key) && ($confirm_date)) {
+            $form = formSigninBS();
+         } else {
+            if ($key_md5 === $key) {
+               $updated = update_confirmed_user($link, $nickname_db, $email_db, $key_md5);
+               if ($updated) {
+                  sendPasswordChangeEmail($nickname_db, $firstname_db, $email_db);
+                  $form = formPasswordChangedBS();
+               } else {
+                  $form = "Occured a database error, please contact 'master@threescript.com'";
+               }
+            } else {
+               $form = "Wrong data. Please enter in contact with 'master@threescript.com'.";
+            }
+         }
+      }
+      break;
+
+   case "email-register-key":
 
       $key = $_REQUEST["key"];
 
@@ -165,7 +238,7 @@ switch ($operation) {
       }
       break;
 
-   case "send-again":
+   case "send-again-email-confirm-register":
       sendRegisterEmail($nickname, $firstname, $email);
       $form = formConfirmBS();
       break;

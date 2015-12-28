@@ -115,7 +115,16 @@ function prepareBlurEvents() {
    });
 }
 
+function submitForm(formId, inputOperation, inputValue) {
+   var form = $("#" + formId);
+   var input = $("#" + inputOperation);
+   if (inputOperation)
+      input.val(inputValue);
+   form.submit();
+}
+
 $(function() {
+
    nickname = $("#nickname");
    firstname = $("#firstname");
    lastname = $("#lastname");
@@ -123,45 +132,43 @@ $(function() {
    email2 = $("#email2");
    password = $("#password");
    password2 = $("#password2");
+
    prepareBlurEvents();
-   $("#signin").click(function(e) {
-      var form = $("#id-form-auth");
-      var input = $("#operation");
-      input.val("signin");
-      form.submit();
+
+   $("#btn-signin").click(function() {
+      submitForm("id-form-auth", "operation", "signin");
    });
-   $("#register").click(function(e) {
-      var form = $("#id-form-auth");
-      var input = $("#operation");
-      input.val("register");
-      form.submit();
+
+   $("#btn-register").click(function() {
+      submitForm("id-form-auth", "operation", "register");
    });
-   $("#save-register").click(function(e) {
-      var ok =
-              testNickname(nickname, false) &&
-              testName(firstname, false) &&
-              testName(lastname, false) &&
-              testEmail(email, true) &&
-              testRetypeEmail(email, email2, false) &&
-              testPassword(email, true) &&
-              testRetypePassword(email, email2, false);
-      if (ok) {
-         var form = $("#id-form-auth");
-         var input = $("#operation");
-         input.val("save-register");
-         form.submit();
+
+   $("#btn-save-register").click(function() {
+      if (testNickname(nickname, false) && testName(firstname, false) &&
+              testName(lastname, false) && testEmail(email, false) &&
+              testRetypeEmail(email, email2, false) && testPassword(email, false) &&
+              testRetypePassword(email, email2, false)) {
+         submitForm("id-form-auth", "operation", "save-register");
       }
    });
-   $("#send-again").click(function(e) {
-      var form = $("#id-form-auth");
-      var input = $("#operation");
-      input.val("send-again");
-      form.submit();
+
+   $("#btn-send-again-email-confirm-register").click(function() {
+      submitForm("id-form-auth", "operation", "send-again-email-confirm-register");
    });
-   $("#confirm").click(function(e) {
-      var form = $("#id-form-auth");
-      var input = $("#operation");
-      input.val("confirm");
-      form.submit();
+
+   $("#btn-email-register-key").click(function() {
+      submitForm("id-form-auth", "operation", "email-register-key");
+   });
+
+   $("#btn-change-password").click(function() {
+      submitForm("id-form-auth", "operation", "change-password");
+   });
+   
+   $("#btn-home").click(function() {
+      submitForm("id-form-auth", "operation", "home");
+   });
+   
+   $("#btn-confirm-change-password-with-password").click(function() {
+      submitForm("id-form-auth", "operation", "confirm-change-password-with-old-password");
    });
 });

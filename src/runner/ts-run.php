@@ -20,9 +20,9 @@ function addScriptList() {
       require ("$threescriptEditorSrcDir/headers/threescript.php");
       require ("$threescriptEditorSrcDir/headers/studddio.php");
       ?>
-      <link href="/oslib/js/unicorn-ui.com/css/font-awesome.min.css" rel="stylesheet" />
+      <!--link href="/oslib/js/unicorn-ui.com/css/font-awesome.min.css" rel="stylesheet" />
       <link href="/oslib/js/unicorn-ui.com/css/buttons.css" rel="stylesheet" />
-      <script src="/oslib/js/unicorn-ui.com/js/buttons.js"></script>
+      <script src="/oslib/js/unicorn-ui.com/js/buttons.js"></script-->
       <style>
          body, html {
             position: absolute; 
@@ -65,14 +65,14 @@ function addScriptList() {
       echo "
                }
                catch (err) {
-                  $('body').append(
+                  document.body.innerHTML =
                      '<div class=\'error\'>'+
                      '<table>' +
                      '<tr><td>error</></td><td>' + err.message + '</td></tr>' +
                      '<tr><td>stack</></td><td>' + err.stack + '</td></tr>' +
                      '<tr><td>line</></td><td>' + err.line + '</td></tr>' +
                      '</table>' +
-                     '</div>');
+                     '</div>';
                }
             }
          </script>";

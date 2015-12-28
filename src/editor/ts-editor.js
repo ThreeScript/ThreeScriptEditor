@@ -23,6 +23,10 @@ var ___ts_editor = {
    }
 };
 
+var __ts_markdown = {
+   converter: null
+};
+
 function prepareEditor() {
    var ae = ___ts_editor.aceEditor;
    ae.editor = ace.edit("editor");
@@ -32,6 +36,10 @@ function prepareEditor() {
    ae.session.setMode("ace/mode/javascript");
    onChangeCursor(ae);
    onChangeAnnotation(ae);
+}
+
+function prepareMarkdown() {
+   __ts_markdown.converter = new showdown.Converter();
 }
 
 function onChangeCursor() {
@@ -380,7 +388,8 @@ function buttonsClick() {
       $("#userid").val(id);
       $("#nickname").val(nickname);
       $("#filename").val(filename);
-      $("#run").val(___ts_crypt.base64_encode('nn=' + nickname + '&fn=' + filename));
+      // $("#run").val(___ts_crypt.base64_encode('nn=' + nickname + '&fn=' + filename));
+      $('#form-run').attr('action', '?run=' + ___ts_crypt.base64_encode('nn=' + nickname + '&fn=' + filename));
       submitForm("form-run");
    });
 
@@ -416,34 +425,20 @@ function buttonsClick() {
    $("#btn-upload").click(function(e) {
    });
 
-   $("#signin").click(function(e) {
+   $("#btn-signin").click(function(e) {
       submitForm("form-signin", "operation", "signin");
-      /*
-       var form = $("#form-signin");
-       var input = $("#operation");
-       input.val("signin");
-       form.submit();
-       */
    });
 
-   $("#signout").click(function() {
-      submitForm("form-signout", "operation", "signout");
-      /*
-       var form = $("#form-signout");
-       var input = $("#operation");
-       input.val("signout");
-       form.submit();
-       */
-   });
-
-   $("#register").click(function() {
+   $("#btn-register").click(function() {
       submitForm("form-signin", "operation", "register");
-      /*
-       var form = $("#form-signin");
-       var input = $("#operation");
-       input.val("register");
-       form.submit();
-       */
+   });
+
+   $("#btn-signout").click(function() {
+      submitForm("form-signout", "operation", "signout");
+   });
+
+   $("#btn-change-password").click(function() {
+      submitForm("form-signout", "operation", "change-password");
    });
 }
 
@@ -479,7 +474,9 @@ $(function() {
 
    disableButtons();
 
-   prepareEditor(___ts_editor.aceEditor);
+   prepareEditor();
+   
+   prepareMarkdown();
 
    buttonsClick();
 
@@ -554,19 +551,33 @@ function changeNode(nodeData) {
             switch (content_data.type) {
                case 'text':
                case 'txt':
-               case 'md':
                case 'htaccess':
                case 'log':
                case 'sql':
                case 'php':
-               case 'js':
                case 'json':
                case 'css':
                case 'html':
+                  break;
+               case 'js':
                   $('#data .code').show();
                   ___ts_editor.aceEditor.editing = true;
-                  ___ts_editor.aceEditor.session.setValue(content_data.content);
                   ___ts_editor.aceEditor.editor.setReadOnly(content_data.data.readonly);
+                  ___ts_editor.aceEditor.session.setMode("ace/mode/javascript");
+                  ___ts_editor.aceEditor.session.setValue(content_data.content);
+                  break;
+               case 'md':
+                  if (__ts_markdown && __ts_markdown.converter) {
+                  var html = __ts_markdown.converter.makeHtml(content_data.content);
+                  $('#data .default').html(html).show();
+                  }
+                  /*
+                   $('#data .code').show();
+                   ___ts_editor.aceEditor.editing = true;
+                   ___ts_editor.aceEditor.editor.setReadOnly(content_data.data.readonly);
+                   ___ts_editor.aceEditor.session.setMode("ace/mode/markdown");
+                   ___ts_editor.aceEditor.session.setValue(content_data.content);
+                   */
                   break;
                case 'png':
                case 'jpg':

@@ -2,6 +2,8 @@
 <? echo "<script src='$threescriptSrcDir/ts/params/params.js'></script>\n"; ?>
 <? echo "<script src='$threescriptSrcDir/ts/materials/materials.js'></script>\n"; ?>
 <? echo "<script src='$threescriptSrcDir/ts/defaults/defaults.js'></script>\n"; ?>
+<? echo "<script src='$threescriptSrcDir/animation/animation.js'></script>\n"; ?>
+<? echo "<script src='$threescriptSrcDir/animation/tracks/tracks.js'></script>\n"; ?>
 <? echo "<script src='$threescriptSrcDir/cameras/cameras.js'></script>\n"; ?>
 <? echo "<script src='$threescriptSrcDir/container/container.js'></script>\n"; ?>
 <? echo "<script src='$threescriptSrcDir/core/core.js'></script>\n"; ?>
@@ -9,6 +11,7 @@
 <? echo "<script src='$threescriptSrcDir/examples/js/effects.js'></script>\n"; ?>
 <? echo "<script src='$threescriptSrcDir/extras/extras.js'></script>\n"; ?>
 <? echo "<script src='$threescriptSrcDir/extras/geometries/geometries.js'></script>\n"; ?>
+<? echo "<script src='$threescriptSrcDir/extras/helpers/helpers.js'></script>\n"; ?>
 <? echo "<script src='$threescriptSrcDir/lights/lights.js'></script>\n"; ?>
 <? echo "<script src='$threescriptSrcDir/loaders/loaders.js'></script>\n"; ?>
 <? echo "<script src='$threescriptSrcDir/materials/materials.js'></script>\n"; ?>

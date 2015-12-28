@@ -14,8 +14,6 @@
       <meta property="og:url" content="http://threescript.com" />
       <meta property="og:image" content="http://threescript.com/img/ts/logo/logo.02a.673x317.png" />      
       <meta property="og:app_id" content="975584632501298" />      
-      <meta property="og:locale" content="en_US" />            <!-- Default -->
-      <meta property="og:locale:alternate" content="pt_BR" />  <!-- French -->
       <link href="/oslib/js/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" />
       <link href="/oslib/js/jstree/3.2.1/dist/themes/default/style.min.css" rel="stylesheet" />
       <link rel="stylesheet" href="/oslib/js/unicorn-ui.com/css/font-awesome.min.css" />
@@ -27,6 +25,7 @@
       <script src="/oslib/js/unicorn-ui.com/js/buttons.js"></script>
       <script src="/oslib/js/jstree/3.2.1/dist/jstree.min.js"></script>
       <script src="/oslib/js/ace.c9.com/ace-builds.2.2.0/src-noconflict/ace.js" charset="utf-8"></script>
+      <script src="/oslib/js/showdown/v150106/dist/showdown.min.js" charset="utf-8"></script>
       <?
       echo "<script src='$threescriptEditorSrcDir/editor/ts-editor.js'></script>";
       echo "<script src='$threescriptEditorSrcDir/crypt/ts-crypt.js'></script>";
@@ -101,7 +100,9 @@
                      <input type='hidden' name='auth'></input>
                      <input id='operation' type='hidden' name='operation'></input>" .
                   formFieldBS(_("Name"), "text", "id-name", "name", $firstname, "glyphicon-user") . "                           
-                     <button id='signout' type='submit' class='btn btn-primary'>" . _("Sign Out") . "</button>
+                     <button id='btn-signout' type='submit' class='btn btn-primary'>" . _("Sign Out") . "</button>
+                     <a id='btn-change-password' href='#' class='btn btn-primary'>" . _("Change Password") . "</a>
+                     <a id='btn-home' href='?' class='btn btn-primary'>" . _("Home") . "</a>
                      </form>";
                } else {
                   echo "
@@ -110,8 +111,10 @@
                      <input id='operation' type='hidden' name='operation'></input>" .
                   formFieldBS(_("Nickname or Email"), "text", "id-nickname-or-email", "nickname_or_email", "", "glyphicon-user") .
                   formFieldBS(_("Password"), "password", "id-password", "password", "", "glyphicon-lock") . "
-                     <button id='signin' type='submit' class='btn btn-primary'>" . _("Sign In") . "</button>
-                     <button  id='register' type='submit' class='btn btn-primary'>" . _("Register") . "</button>
+                     <button id='btn-signin' type='submit' class='btn btn-primary'>" . _("Sign In") . "</button>
+                     <button  id='btn-register' type='submit' class='btn btn-primary'>" . _("Register") . "</button>
+                     <button  id='btn-change-password' type='submit' class='btn btn-primary'>" . _("Change Password") . "</button>
+                     <a id='btn-home' href='?' class='btn btn-primary'>" . _("Home") . "</a>
                      </form>";
                }
                ?>
@@ -142,7 +145,7 @@
                           left:50%; top:50%; padding:0; 
                           max-height:90%; max-width:90%;" />
                   </div>
-                  <div class="content default abs0000" style="text-align:center;">
+                  <div class="content default abs0000" style="padding: 5px;">
                      <?= _("Select a file from the tree."); ?>
                   </div>
                </div>
@@ -173,11 +176,11 @@
                <!--a id="upload" href="#" class="fl btn btn-primary"><span class="glyphicon glyphicon-print"></span>Upload</a-->
                <input id="file-upload" name="file-upload" type="file" class="button button-primary button-small" style="display: none"/>
             </form>
-            <form id="form-run" action="?" method="post" target="_blank">
+            <form id="form-run" action="?run" method="post" target="_blank">
                <input id="userid" name="userid" type="hidden" value=""/>
                <input id="nickname" name="nickname" type="hidden" value=""/>
                <input id="filename" name="filename" type="hidden" value=""/>
-               <input id="run" name="run" type="hidden" value=""/>
+               <!--input id="run" name="run" type="hidden" value=""/-->
             </form>
             <button id="btn-run" class="fl ml5 btn btn-primary"><span class="mr5 glyphicon glyphicon-play"></span><? echo _("Run"); ?></button>
             <button id="btn-save" class="fl ml5 btn btn-primary"><span class="mr5 glyphicon glyphicon-floppy-save"></span><? echo _("Save"); ?></button>

@@ -4,7 +4,7 @@
  * @param type $format
  * -----------------------------------------------------------------------------
  */
-function createConfirmTemplate($format) {
+function createConfirmTemplate($url, $key, $format) {
    $main = "background: #eee; padding: 20px;";
    $verdana = "font-family: Verdana, Arial, Geneva; ";
    $fs18 = "font-size: 18px; ";
@@ -32,12 +32,11 @@ function createConfirmTemplate($format) {
    $style_you_received = "$verdana $fs12 $bgray_eee $b1pxs000 $mb20 $pad5 $cblack";
    $style_normal = "$verdana $fs12";
 
-   $url = "www.threescript.com?auth&operation=signin";
-   $str .= mailDiv(_("Congratulations,") . " {USERNAME}, " . _("you are registered in") . " ThreeScript!", $style_welcome, 2, $format);
-   $str .= mailDiv(_("Thank you for creating an account in TS."), $style_thank_you, 2, $format);
+   $url = "www.threescript.com?auth&operation=change";
+   $str .= mailDiv("{USERNAME},", $style_welcome, 2, $format);
    if ($format === "html") {
-      $str .= mailDiv(_("Please sign into your account by clicking the link below!"), "$style_please_signin $blue", 2, $format);
-      $str .= mailLink($url, "ThreeScript", $style_link, 2, $format);
+      $str .= mailDiv(_("Change your password in TS by clicking the link below!"), "$style_please_signin $blue", 2, $format);
+      $str .= mailLink($url, $key, $style_link, 2, $format);
       $str .= mailDiv(_("If the above link is not working, please copy and paste the url address below."), "$style_please_signin $blue $mt20", 2, $format);
    } else {
       $str .= mailDiv(_("Please sign into your account, copying and pasting the address below."), "", 2, $format);

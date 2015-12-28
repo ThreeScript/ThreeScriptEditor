@@ -46,8 +46,11 @@ function formSigninBS() {
       $operation
       $nickname
       $password
-      <a id='signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
-      <a id='register' href='#' class='btn btn-primary'>" . _("Register") . "</a>
+      <a id='btn-signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
+      <a id='btn-register' href='#' class='btn btn-primary'>" . _("Register") . "</a>
+      <a id='btn-change-password' href='#' class='btn btn-primary'>" . _("Change Password") . "</a>
+      <a id='btn-edit' href='?edit' class='btn btn-primary'>" . _("TS Editor") . "</a>
+      <a id='btn-home' href='?' class='btn btn-primary'>" . _("Home") . "</a>
       $buttons
    ";
 
@@ -78,11 +81,42 @@ function formChangePasswordBS($from_link) {
    $buttons = providersButtons();
    $content = "
       $auth $operation $password_now $password_new $password_new_retyped
-      <a id='change' href='#' class='btn btn-primary'>" . _("Change") . "</a>
-      <a id='return' href='#' class='btn btn-primary'>" . _("Return") . "</a>
+      <a id='btn-email-change-key' href='#' class='btn btn-primary'>" . _("Confirm Change") . "</a>
+      <a id='btn-edit' href='?edit' class='btn btn-primary'>" . _("TS Editor") . "</a>
+      <a id='btn-home' href='?' class='btn btn-primary'>" . _("Home") . "</a>
       $buttons
    ";
    $str = formCommonBS("Change Password", $content);
+   return $str;
+}
+
+/** ----------------------------------------------------------------------------
+ * @param type $provider
+ * @param type $nickname
+ * @param type $firstname
+ * @param type $lastname
+ * @param type $email
+ * @param type $provider_user_id
+ * @return string
+ * -----------------------------------------------------------------------------
+ */
+function formSendEmailChangePasswordBS() {
+   $auth = "<input type='hidden' name='auth'>";
+   $operation = "<input id='operation' type='hidden' name='operation' value=''>";
+   $email = formRowFieldBS(_("Email"), "text", "email", "email", "", "form-group", "glyphicon-envelope", _("Type your email."), _("Type your valid email address to receive a link to change your password."));
+   $buttons = providersButtons();
+   $content = "
+      $auth
+      $operation
+      $email
+      <a id='btn-send-email-change-password' href='#' class='btn btn-primary'>" . _("Send Email") . "</a>
+      <a id='btn-signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
+      <a id='btn-register' href='#' class='btn btn-primary'>" . _("Register") . "</a>
+      <a id='btn-edit' href='?edit' class='btn btn-primary'>" . _("TS Editor") . "</a>
+      <a id='btn-home' href='?' class='btn btn-primary'>" . _("Home") . "</a>
+      $buttons
+   ";
+   $str = formCommonBS("Change Password with Email", $content);
    return $str;
 }
 
@@ -128,8 +162,11 @@ function formRegisterBS($provider, $nickname, $firstname, $lastname, $email, $pr
          $password
          $password2
       </div>
-      <a id='save-register' href='#' class='btn btn-primary'>" . _("Save Register") . "</a>
-      <a id='signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
+      <a id='btn-save-register' href='#' class='btn btn-primary'>" . _("Save Register") . "</a>
+      <a id='btn-signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
+      <a id='btn-change-password' href='#' class='btn btn-primary'>" . _("Change Password") . "</a>
+      <a id='btn-edit' href='?edit' class='btn btn-primary'>" . _("TS Editor") . "</a>
+      <a id='btn-home' href='?' class='btn btn-primary'>" . _("Home") . "</a>
       $buttons
    ";
 
@@ -151,36 +188,19 @@ function formRegisterBS($provider, $nickname, $firstname, $lastname, $email, $pr
 function formConfirmBS() {
    $auth = "<input type='hidden' name='auth'>";
    $operation = "<input id='operation' type='hidden' name='operation' value=''>";
-   $confirm_key = formRowFieldBS(_("Confirm key"), "text", "confirm_key", "confirm_key", "", "form-group", "glyphicon-user", _("Type your nickname."), _("Use at least four alphanumeric characters, without spaces and the first alfa."));
-
+   $confirm_key = formRowFieldBS(_("Confirm Key"), "text", "confirm_key", "confirm_key", "", "form-group", "glyphicon-user", _("Type your nickname."), _("Use at least four alphanumeric characters, without spaces and the first alfa."));
    $buttons = providersButtons();
-
    $content = "
       $auth
       $operation
       $confirm_key
-      <a id='signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
-      <a id='confirm' href='#' class='btn btn-primary'>" . _("Confirm") . "</a>
+      <a id='btn-signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
+      <a id='btn-email-register-key' href='#' class='btn btn-primary'>" . _("Confirm Key") . "</a>
+      <a id='btn-edit' href='?edit' class='btn btn-primary'>" . _("TS Editor") . "</a>
+      <a id='btn-home' href='?' class='btn btn-primary'>" . _("Home") . "</a>
       $buttons
    ";
-
    $str = formCommonBS("Confirm", $content);
-   /*
-     $str = "
-     <h1 class='well' style='position: absolute; margin-top: 0px;'>" . _("Confirm") . "</h1>
-     <div class='col-lg-12 well' style='position: absolute; top: 100px;'>
-     <form id='id-form-auth' action='?' method='post' role='form'>
-     <div class='col-sm-12'>
-     $auth
-     $operation
-     $confirm_key
-     <a id='signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
-     <a id='confirm' href='#' class='btn btn-primary'>" . _("Confirm") . "</a>
-     $buttons
-     </div >
-     </form>
-     </div >";
-    */
    return $str;
 }
 
@@ -197,31 +217,16 @@ function formConfirmBS() {
 function formConfirmedBS() {
    $auth = "<input type='hidden' name='auth'>";
    $operation = "<input id='operation' type='hidden' name='operation' value=''>";
-
    $buttons = providersButtons();
-
    $content = "
       $auth
       $operation
-      <a id='signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
+      <a id='btn-signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
+      <a id='btn-edit' href='?edit' class='btn btn-primary'>" . _("TS Editor") . "</a>
+      <a id='btn-home' href='?' class='btn btn-primary'>" . _("Home") . "</a>
       $buttons
    ";
-
    $str = formCommonBS("Confirmed", $content);
-   /*
-     $str = "
-     <h1 class='well' style='position: absolute; margin-top: 0px;'>" . _("Confirmed") . "</h1>
-     <div class='col-lg-12 well' style='position: absolute; top: 100px;'>
-     <form id='id-form-auth' action='?' method='post' role='form'>
-     <div class='col-sm-12'>
-     $auth
-     $operation
-     <a id='signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
-     $buttons
-     </div >
-     </form>
-     </div >";
-    */
    return $str;
 }
 
@@ -241,42 +246,21 @@ function formNotConfirmedBS($nickname, $email) {
    $nickname_hidden = "<input id='nickname' type='hidden' name='nickname' value='$nickname'>";
    $email_hidden = "<input id='email' type='hidden' name='email' value='$email'>";
    $confirm_key = formRowFieldBS(_("Confirm key"), "text", "confirm_key", "confirm_key", "", "form-group", "glyphicon-user", _("Type your nickname."), _("Use at least four alphanumeric characters, without spaces and the first alfa."));
-
    $buttons = providersButtons();
-
-
    $content = "
       $auth
       $operation
       $nickname_hidden
       $email_hidden
       $confirm_key
-      <a id='send-again' href='#' class='btn btn-primary'>" . _("Send again") . "</a>
-      <a id='confirm' href='#' class='btn btn-primary'>" . _("Confirm") . "</a>
-      <a id='signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
+      <a id='btn-send-again-email-confirm-register' href='#' class='btn btn-primary'>" . _("Send Email") . "</a>
+      <a id='btn-confirm-register-key' href='#' class='btn btn-primary'>" . _("Confirm Key") . "</a>
+      <a id='btn-signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
+      <a id='btn-edit' href='?edit' class='btn btn-primary'>" . _("TS Editor") . "</a>
+      <a id='btn-home' href='?' class='btn btn-primary'>" . _("Home") . "</a>
       $buttons
    ";
-
    $str = formCommonBS("Not Confirmed", $content);
-   /*
-     $str = "
-     <h1 class='well' style='position: absolute; margin-top: 0px;'>" . _("Not Confirmed") . "</h1>
-     <div class='col-lg-12 well' style='position: absolute; top: 100px;'>
-     <form id='id-form-auth' action='?' method='post' role='form'>
-     <div class='col-sm-12'>
-     $auth
-     $operation
-     $nickname_hidden
-     $email_hidden
-     $confirm_key
-     <a id='send-again' href='#' class='btn btn-primary'>" . _("Send again") . "</a>
-     <a id='confirm' href='#' class='btn btn-primary'>" . _("Confirm") . "</a>
-     <a id='signin' href='#' class='btn btn-primary'>" . _("Sign In") . "</a>
-     $buttons
-     </div >
-     </form>
-     </div >";
-    */
    return $str;
 }
 
