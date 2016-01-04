@@ -41,13 +41,20 @@ $threescript_version = "r73-1";
 
 $input_threescript_filedir = "$docroot/master/ThreeScript/src";
 $input_threescript_filepaths = array(
+    "animation/animation.js",
+    "animation/tracks/tracks.js",
     "cameras/cameras.js",
     "container/container.js",
     "core/core.js",
     "examples/js/controls.js",
     "examples/js/effects.js",
     "extras/extras.js",
+    "extras/audio/audio.js",
+    "extras/core/core.js",
+    "extras/curves/curves.js",
     "extras/geometries/geometries.js",
+    "extras/helpers/helpers.js",
+    "extras/objects/objects.js",
     "lights/lights.js",
     "loaders/loaders.js",
     "materials/materials.js",
